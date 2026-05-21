@@ -40,15 +40,8 @@ import {
   Clock,
 } from "lucide-react";
 import { useDashboardSummaryQuery } from "@/lib/api-hooks";
-
-// Mock Visual Datasets
-const REVENUE_TREND_DATA = [
-  { month: "Jan", capitalIssued: 45000, revenueCollected: 12000 },
-  { month: "Feb", capitalIssued: 85000, revenueCollected: 19000 },
-  { month: "Mar", capitalIssued: 120000, revenueCollected: 24000 },
-  { month: "Apr", capitalIssued: 190000, revenueCollected: 29000 },
-  { month: "May", capitalIssued: 248500, revenueCollected: 32890 },
-];
+import DashboardLayout from "./layout";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const RISK_PORTFOLIO_DATA = [
   { name: "Active Book", value: 248500 },
@@ -61,42 +54,12 @@ export default function CoreDashboardIndex() {
     isLoading,
     isRefetching,
   } = useDashboardSummaryQuery();
-  console.log("dashboardData", dashboardData);
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  const summaryMetrics = {
-    activeDisbursed: "R 248,500.00",
-    overdueAtRisk: "R 14,250.00",
-    collectedInterest: "R 32,890.00",
-    pendingRequests: 3,
-  };
-
-  const recentActivities = [
-    {
-      id: 1,
-      type: "escalation",
-      message: "Loan #1041 auto-escalated to OVERDUE status",
-      time: "12 mins ago",
-    },
-    {
-      id: 2,
-      type: "payment",
-      message: "Received partial repayment of R 4,500.00 on Loan #1042",
-      time: "1 hour ago",
-    },
-    {
-      id: 3,
-      type: "client",
-      message: "System auto-created client profile for R. Mokoena",
-      time: "2 hours ago",
-    },
-  ];
-
   // Monochromatic shading rules mapped clearly for theme consistency
   const COLORS =
     mounted && resolvedTheme === "dark"
@@ -123,12 +86,21 @@ export default function CoreDashboardIndex() {
             <TrendingUp className="h-4 w-4 text-neutral-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold tracking-tight text-neutral-900 dark:text-white">
-              {summaryMetrics.activeDisbursed}
-            </div>
-            <p className="text-[9px] text-neutral-400 font-mono mt-0.5">
-              Active loan book principal value
-            </p>
+            {isLoading ? (
+              <div className="space-y-2 py-0.5">
+                <Skeleton variant="rectangular" className="h-7 w-28" />
+                <Skeleton variant="text" className="w-40" />
+              </div>
+            ) : (
+              <>
+                <div className="text-xl font-bold tracking-tight text-neutral-900 dark:text-white">
+                  {dashboardData?.metrics?.activeDisbursed}
+                </div>
+                <p className="text-[9px] text-neutral-400 font-mono mt-0.5">
+                  Active loan book principal value
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
 
@@ -140,12 +112,21 @@ export default function CoreDashboardIndex() {
             <AlertTriangle className="h-4 w-4 text-neutral-400 animate-pulse" />
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold tracking-tight text-neutral-900 dark:text-white">
-              {summaryMetrics.overdueAtRisk}
-            </div>
-            <p className="text-[9px] text-neutral-400 font-mono mt-0.5">
-              Total active overdue balances
-            </p>
+            {isLoading ? (
+              <div className="space-y-2 py-0.5">
+                <Skeleton variant="rectangular" className="h-7 w-24" />
+                <Skeleton variant="text" className="w-36" />
+              </div>
+            ) : (
+              <>
+                <div className="text-xl font-bold tracking-tight text-neutral-900 dark:text-white">
+                  {dashboardData?.metrics?.overdueAtRisk}
+                </div>
+                <p className="text-[9px] text-neutral-400 font-mono mt-0.5">
+                  Total active overdue balances
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
 
@@ -157,12 +138,21 @@ export default function CoreDashboardIndex() {
             <Coins className="h-4 w-4 text-neutral-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold tracking-tight text-neutral-900 dark:text-white">
-              {summaryMetrics.collectedInterest}
-            </div>
-            <p className="text-[9px] text-neutral-400 font-mono mt-0.5">
-              Returned profit ledger margin
-            </p>
+            {isLoading ? (
+              <div className="space-y-2 py-0.5">
+                <Skeleton variant="rectangular" className="h-7 w-20" />
+                <Skeleton variant="text" className="w-32" />
+              </div>
+            ) : (
+              <>
+                <div className="text-xl font-bold tracking-tight text-neutral-900 dark:text-white">
+                  {dashboardData?.metrics?.collectedInterest}
+                </div>
+                <p className="text-[9px] text-neutral-400 font-mono mt-0.5">
+                  Returned profit ledger margin
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
 
@@ -174,19 +164,26 @@ export default function CoreDashboardIndex() {
             <Clock className="h-4 w-4 text-neutral-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold tracking-tight text-neutral-900 dark:text-white">
-              {summaryMetrics.pendingRequests}
-            </div>
-            <p className="text-[9px] text-neutral-400 font-mono mt-0.5">
-              Awaiting workspace onboarding approvals
-            </p>
+            {isLoading ? (
+              <div className="space-y-2 py-0.5">
+                <Skeleton variant="rectangular" className="h-7 w-16" />
+                <Skeleton variant="text" className="w-44" />
+              </div>
+            ) : (
+              <>
+                <div className="text-xl font-bold tracking-tight text-neutral-900 dark:text-white">
+                  {dashboardData?.metrics?.pendingRequests}
+                </div>
+                <p className="text-[9px] text-neutral-400 font-mono mt-0.5">
+                  Awaiting workspace onboarding approvals
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>
 
-      {/* 3. GRAPHICAL RENDERING LAYOUT SECTION */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 md:gap-4">
-        {/* GRAPH 1: LINE CHART */}
         <Card className="border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 rounded-xl shadow-sm p-4">
           <CardHeader className="p-2 pb-6">
             <CardTitle className="text-xs font-bold uppercase tracking-wide text-neutral-900 dark:text-white">
@@ -198,66 +195,95 @@ export default function CoreDashboardIndex() {
             </CardDescription>
           </CardHeader>
           <CardContent className="h-72 pl-0">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart
-                data={REVENUE_TREND_DATA}
-                margin={{ top: 5, right: 10, left: -10, bottom: 5 }}
-              >
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  className="stroke-neutral-100 dark:stroke-neutral-800"
-                  vertical={false}
-                />
-                <XAxis
-                  dataKey="month"
-                  className="text-[10px] font-mono fill-neutral-400"
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <YAxis
-                  className="text-[10px] font-mono fill-neutral-400"
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "var(--card)",
-                    borderColor: "var(--border)",
-                    borderRadius: "0.55rem",
-                  }}
-                  labelStyle={{
-                    fontSize: "11px",
-                    fontWeight: "bold",
-                    fontFamily: "monospace",
-                  }}
-                  itemStyle={{ fontSize: "11px", color: "var(--foreground)" }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="capitalIssued"
-                  name="Disbursed"
-                  stroke="currentColor"
-                  className="text-neutral-900 dark:text-neutral-50"
-                  strokeWidth={2.5}
-                  dot={false}
-                  activeDot={{ r: 4 }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="revenueCollected"
-                  name="Revenue"
-                  stroke="currentColor"
-                  className="text-neutral-400 dark:text-neutral-500"
-                  strokeWidth={2}
-                  strokeDasharray="4 4"
-                  dot={false}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+            {isLoading ? (
+              <div className="w-full h-full flex flex-col justify-between pl-4 pb-2">
+                <div className="flex-1 flex items-end gap-4 border-b border-l border-neutral-100 dark:border-neutral-800/60 p-2 relative overflow-hidden">
+                  {/* Subtle diagonal line wireframe simulating a placeholder graph trend */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-neutral-100/30 dark:via-neutral-800/20 to-transparent h-[2px] w-full top-1/2 rotate-12 transform scale-110 animate-pulse" />
+                  <Skeleton
+                    variant="rectangular"
+                    className="h-[20%] w-full opacity-40"
+                  />
+                  <Skeleton
+                    variant="rectangular"
+                    className="h-[45%] w-full opacity-40"
+                  />
+                  <Skeleton
+                    variant="rectangular"
+                    className="h-[35%] w-full opacity-40"
+                  />
+                  <Skeleton
+                    variant="rectangular"
+                    className="h-[75%] w-full opacity-40"
+                  />
+                </div>
+                <div className="flex justify-between mt-2 px-1">
+                  <Skeleton variant="text" className="w-8" />
+                  <Skeleton variant="text" className="w-8" />
+                  <Skeleton variant="text" className="w-8" />
+                  <Skeleton variant="text" className="w-8" />
+                </div>
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart
+                  data={dashboardData?.trendData}
+                  margin={{ top: 5, right: 10, left: -10, bottom: 5 }}
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    className="stroke-neutral-100 dark:stroke-neutral-800"
+                    vertical={false}
+                  />
+                  <XAxis
+                    dataKey="month"
+                    className="text-[10px] font-mono fill-neutral-400"
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <YAxis
+                    className="text-[10px] font-mono fill-neutral-400"
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "var(--card)",
+                      borderColor: "var(--border)",
+                      borderRadius: "0.55rem",
+                    }}
+                    labelStyle={{
+                      fontSize: "11px",
+                      fontWeight: "bold",
+                      fontFamily: "monospace",
+                    }}
+                    itemStyle={{ fontSize: "11px", color: "var(--foreground)" }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="capitalIssued"
+                    name="Disbursed"
+                    stroke="currentColor"
+                    className="text-neutral-900 dark:text-neutral-50"
+                    strokeWidth={2.5}
+                    dot={false}
+                    activeDot={{ r: 4 }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="revenueCollected"
+                    name="Revenue"
+                    stroke="currentColor"
+                    className="text-neutral-400 dark:text-neutral-500"
+                    strokeWidth={2}
+                    strokeDasharray="4 4"
+                    dot={false}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            )}
           </CardContent>
         </Card>
-
-        {/* GRAPH 2: COMPACT PIE CHART WITH ZERO HOLE GAPS */}
         <Card className="border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 rounded-xl shadow-sm p-4">
           <CardHeader className="p-2 pb-2">
             <CardTitle className="text-xs font-bold uppercase tracking-wide text-neutral-900 dark:text-white">
@@ -269,48 +295,88 @@ export default function CoreDashboardIndex() {
             </CardDescription>
           </CardHeader>
           <CardContent className="h-72 flex justify-center items-center p-0">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
-                <Tooltip
-                  formatter={(value: number) => `R ${value.toLocaleString()}`}
-                  contentStyle={{
-                    backgroundColor: "var(--card)",
-                    borderColor: "var(--border)",
-                    borderRadius: "0.55rem",
-                  }}
-                  itemStyle={{ fontSize: "11px", color: "var(--foreground)" }}
-                />
-                <Legend
-                  verticalAlign="bottom"
-                  height={36}
-                  iconSize={10}
-                  iconType="square"
-                  wrapperStyle={{ fontSize: "11px", fontFamily: "sans-serif" }}
-                />
-                <Pie
-                  data={RISK_PORTFOLIO_DATA}
-                  cx="50%"
-                  cy="45%"
-                  labelLine={false}
-                  outerRadius={95} // Snug layout boundary spacing lock [1]
-                  dataKey="value"
-                  stroke="var(--card)" // Integrates natively with active light/dark canvas backgrounds [2]
-                  strokeWidth={2}
-                >
-                  {RISK_PORTFOLIO_DATA.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
+            {isLoading ? (
+              <div className="w-full h-full flex flex-col items-center justify-center pt-2">
+                {/* Minimalistic Ring Skeleton mimicking the Pie Chart */}
+                <div className="relative flex items-center justify-center w-[190px] h-[190px]">
+                  <Skeleton
+                    variant="circular"
+                    className="absolute w-[190px] h-[190px] opacity-40"
+                  />
+                  {/* Internal punchout to simulate an elegant donut ring structure */}
+                  <div className="absolute w-[130px] h-[130px] rounded-full bg-white dark:bg-neutral-900 z-10" />
+                </div>
+
+                {/* Horizontal Legend Skeletons mapping the chart keys below */}
+                <div className="flex gap-4 justify-center items-center mt-6 w-full px-4">
+                  <div className="flex items-center gap-1.5">
+                    <Skeleton
+                      variant="rectangular"
+                      className="h-2.5 w-2.5 rounded-sm"
                     />
-                  ))}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
+                    <Skeleton variant="text" className="w-14 h-2.5" />
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Skeleton
+                      variant="rectangular"
+                      className="h-2.5 w-2.5 rounded-sm"
+                    />
+                    <Skeleton variant="text" className="w-16 h-2.5" />
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Skeleton
+                      variant="rectangular"
+                      className="h-2.5 w-2.5 rounded-sm"
+                    />
+                    <Skeleton variant="text" className="w-12 h-2.5" />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+                  <Tooltip
+                    formatter={(value: number) => `R ${value.toLocaleString()}`}
+                    contentStyle={{
+                      backgroundColor: "var(--card)",
+                      borderColor: "var(--border)",
+                      borderRadius: "0.55rem",
+                    }}
+                    itemStyle={{ fontSize: "11px", color: "var(--foreground)" }}
+                  />
+                  <Legend
+                    verticalAlign="bottom"
+                    height={36}
+                    iconSize={10}
+                    iconType="square"
+                    wrapperStyle={{
+                      fontSize: "11px",
+                      fontFamily: "sans-serif",
+                    }}
+                  />
+                  <Pie
+                    data={dashboardData?.riskData}
+                    cx="50%"
+                    cy="45%"
+                    labelLine={false}
+                    outerRadius={95}
+                    dataKey="value"
+                    stroke="var(--card)"
+                    strokeWidth={2}
+                  >
+                    {RISK_PORTFOLIO_DATA.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            )}
           </CardContent>
         </Card>
       </div>
-
-      {/* 4. SHORTCUT HUB & AUDIT STREAM TICKER */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2 space-y-6">
           <h2 className="text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500">
@@ -389,22 +455,75 @@ export default function CoreDashboardIndex() {
               </div>
             </CardHeader>
 
-            <CardContent className="p-4 flex-1 space-y-4 overflow-y-auto">
-              {recentActivities.map((act) => (
-                <div
-                  key={act.id}
-                  className="flex justify-between items-start gap-3 border-b border-neutral-100 dark:border-neutral-800 pb-3 last:border-0 last:pb-0"
-                >
-                  <div className="space-y-0.5">
-                    <p className="text-xs font-medium text-neutral-800 dark:text-neutral-300 leading-tight">
-                      {act.message}
-                    </p>
-                    <span className="text-[9px] font-mono text-neutral-400 dark:text-neutral-500">
-                      {act.time}
-                    </span>
-                  </div>
-                </div>
-              ))}
+            <CardContent className="p-4 flex-1 space-y-3 overflow-y-auto">
+              {isLoading
+                ? // Replicates the shape of exactly 3 operation rows perfectly
+                  Array.from({ length: 3 }).map((_, idx) => (
+                    <div
+                      key={idx}
+                      className="border-b border-neutral-100 dark:border-neutral-800 pb-3 last:border-0 last:pb-0 space-y-2"
+                    >
+                      <div className="flex gap-2">
+                        <Skeleton variant="rectangular" className="h-4 w-12" />
+                        <Skeleton variant="rectangular" className="h-4 w-20" />
+                      </div>
+                      <Skeleton variant="text" className="w-[90%]" />
+                      <div className="flex gap-4 w-1/2">
+                        <Skeleton variant="text" className="h-2" />
+                        <Skeleton variant="text" className="h-2" />
+                      </div>
+                    </div>
+                  ))
+                : dashboardData?.recentActivityLogs?.map((act) => (
+                    <div
+                      key={act.id}
+                      className="flex justify-between items-start gap-3 border-b border-neutral-100 dark:border-neutral-800 pb-3 last:border-0 last:pb-0"
+                    >
+                      <div className="space-y-0.5 flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span
+                            className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                              act.action === "CREATE" ||
+                              act.action === "ONBOARD"
+                                ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400"
+                                : "bg-rose-50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-400"
+                            }`}
+                          >
+                            {act.action}
+                          </span>
+                          <span className="text-[10px] font-semibold text-neutral-400 dark:text-neutral-500">
+                            {act.entityName} #{act.entityId}
+                          </span>
+                        </div>
+                        <p className="text-xs font-medium text-neutral-800 dark:text-neutral-300 leading-snug break-words mt-1">
+                          {act.newValue || act.oldValue || "No changes logged."}
+                        </p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="text-[9px] font-mono text-neutral-400 dark:text-neutral-500 truncate max-w-[150px]">
+                            {act.userId}
+                          </span>
+                          <span className="text-[9px] text-neutral-400 dark:text-neutral-500 font-medium">
+                            •{" "}
+                            {new Date(act.timestamp).toLocaleDateString(
+                              undefined,
+                              {
+                                month: "short",
+                                day: "numeric",
+                              },
+                            )}{" "}
+                            {new Date(act.timestamp).toLocaleTimeString(
+                              undefined,
+                              {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: false,
+                              },
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
             </CardContent>
 
             <CardFooter className="p-3 bg-neutral-50 dark:bg-neutral-950/50 border-t border-neutral-100 dark:border-neutral-800">
