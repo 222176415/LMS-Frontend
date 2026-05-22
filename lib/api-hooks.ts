@@ -10,6 +10,7 @@ import {
   LoanContract,
   LoginResponse,
   OnboardStaffPayload,
+  RecordRepaymentPayload,
 } from "@/lib/type";
 
 export function useDashboardSummaryQuery() {
