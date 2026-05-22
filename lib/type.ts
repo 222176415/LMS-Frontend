@@ -87,3 +87,38 @@ export interface DashboardSummaryData {
   }>;
   riskData: Array<{ name: string; value: number }>;
 }
+export interface ClientInfo {
+  id: number;
+  firstName: string;
+  lastName: string; // Changed from surname
+  email: string;
+  phoneNumber: string;
+  address: string;
+}
+
+export interface Loan {
+  id: number;
+  principalAmount: number;
+  interestRate: number;
+  totalAmountDue: number;
+  status: "Active" | "Overdue" | "Paid" | "Defaulted";
+  dueDate: string;
+  client: ClientInfo;
+}
+export interface FilterBarProps {
+  search: string;
+  setSearch: (val: string) => void;
+  activeTab: "All" | "Active" | "Overdue" | "Paid";
+  setActiveTab: (tab: "All" | "Active" | "Overdue" | "Paid") => void;
+  isLoading: boolean;
+}
+export interface MetricsGridProps {
+  isLoading: boolean;
+  totalPortfolio: number;
+  totalOverdue: number;
+  collectedCapital: number;
+}
+export interface DashboardHeaderProps {
+  isRefetching: boolean;
+  onExport: () => void;
+}
