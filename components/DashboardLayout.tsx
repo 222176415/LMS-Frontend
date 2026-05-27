@@ -28,6 +28,7 @@ import { Loan, FilterBarProps, DashboardHeaderProps } from "@/lib/type";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TrendingUp, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { NotificationCenter, Toast } from "../ui/Notification";
 
 interface LoansTableProps {
   isLoading: boolean;
@@ -37,7 +38,7 @@ interface LoansTableProps {
 export function AutoIssueModal() {
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
-
+  const [toasts, setToasts] = useState<Toast[]>([]);
   const [form, setForm] = useState({
     firstName: "",
     surname: "",
@@ -47,10 +48,31 @@ export function AutoIssueModal() {
     principalAmount: "",
     dueDate: "",
   });
+  const showToast = (type: "success" | "error", message: string) => {
+    const id = Math.random().toString(36).substring(2, 9);
+    setToasts((prev) => [...prev, { id, type, message }]);
+  };
 
+  const removeToast = (id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  };
   const createLoanMutation = useMutation({
-    mutationFn: async (payload: any) => await apiClient.post("/loans", payload),
-    onSuccess: () => {
+    mutationFn: async (payload: any) => {
+      return await apiClient.post("/loans", payload);
+    },
+    onSuccess: (response: any) => {
+      if (response && response.success === false) {
+        showToast(
+          "error",
+          response.message || "Runtime configuration mismatch.",
+        );
+        return;
+      }
+
+      showToast(
+        "success",
+        "Loan ledger record provisions initialized successfully!",
+      );
       queryClient.invalidateQueries({ queryKey: ["loansLedger"] });
       setIsOpen(false);
       setForm({
@@ -63,7 +85,13 @@ export function AutoIssueModal() {
         dueDate: "",
       });
     },
-    onError: (err: any) => alert(`Submission Failure: ${err.message}`),
+    onError: (err: any) => {
+      console.log(err, "error");
+      showToast(
+        "error",
+        err?.message || "Internal transmission layer interface failure.",
+      );
+    },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -93,6 +121,7 @@ export function AutoIssueModal() {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <NotificationCenter notifications={toasts} onDismiss={removeToast} />
       <DialogTrigger asChild>
         <Button className="bg-neutral-900 text-white text-xs rounded-md h-9 gap-1.5">
           <Plus size={14} />
@@ -221,7 +250,7 @@ export function LoansTable({ isLoading, loans }: LoansTableProps) {
   return (
     <div className="rounded-xl border border-neutral-200 bg-white overflow-hidden shadow-xs">
       <Table>
-        <TableHeader className="bg-neutral-50">
+        <TableHeader className="bg-neutral-50 dark:bg-neutral-950">
           <TableRow className="border-neutral-200">
             <TableHead className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 h-10">
               Contract Ref
@@ -418,7 +447,7 @@ export function MetricsGrid({
           {isLoading ? (
             <Skeleton className="h-7 w-32 bg-neutral-200" />
           ) : (
-            <div className="text-2xl font-bold text-neutral-900">
+            <div className="text-2xl font-bold text-neutral-900 dark:text-white">
               {formatCurrency(totalPortfolio)}
             </div>
           )}
@@ -437,7 +466,7 @@ export function MetricsGrid({
           {isLoading ? (
             <Skeleton className="h-7 w-32 bg-neutral-200" />
           ) : (
-            <div className="text-2xl font-bold text-amber-600">
+            <div className="text-2xl font-bold text-neutral-900 dark:text-white">
               {formatCurrency(totalOverdue)}
             </div>
           )}
@@ -456,7 +485,7 @@ export function MetricsGrid({
           {isLoading ? (
             <Skeleton className="h-7 w-32 bg-neutral-200" />
           ) : (
-            <div className="text-2xl font-bold text-emerald-600">
+            <div className="text-2xl font-bold text-neutral-900 dark:text-white">
               {formatCurrency(collectedCapital)}
             </div>
           )}
