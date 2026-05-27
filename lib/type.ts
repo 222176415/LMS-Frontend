@@ -122,3 +122,12 @@ export interface DashboardHeaderProps {
   isRefetching: boolean;
   onExport: () => void;
 }
+export interface ServerResponse<T = any> {
+  success: boolean;
+  data: T | null;
+  message: string;
+}
+
+export interface UseAutoIssueLoanMutationProps {
+  showToast: (type: "success" | "error", message: string) => void;
+}
