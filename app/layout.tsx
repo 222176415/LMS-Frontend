@@ -5,7 +5,7 @@ import NextTopLoader from 'nextjs-toploader';
 import { cn } from "@/lib/utils";
 import Providers from "@/components/providers";
 import "./globals.css";
-import { useRef } from 'react';
+
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 const geistSans = Geist({
@@ -30,7 +30,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const topLoaderRef = useRef(null);
+
   return (
     <html
       lang="en-ZA"
@@ -47,7 +47,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-background text-foreground transition-colors duration-200">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <NextTopLoader
-              ref={topLoaderRef}
+             // ref={topLoaderRef}
               color="#2299DD"
               height={3}
               crawlSpeed={200}
