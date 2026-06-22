@@ -62,6 +62,8 @@ export default function AuthSplitPage() {
       }
     },
     onError: (error: any) => {
+      console.error("error",error)
+      console.log("error",error)
       const serverMessage =
         error.response?.data?.message ||
         "Runtime connection timeout to backend server.";
