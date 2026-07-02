@@ -54,6 +54,11 @@ export default function AuthSplitPage() {
           "lms_org_id",
           response.data.organizationId.toString(),
         );
+        localStorage.setItem(
+          "org_name",
+          response.data.organizationName.toString(),
+        );
+        console.log("response", response);
         router.push("/dashboard");
       } else {
         setErrorMessage(
@@ -62,8 +67,6 @@ export default function AuthSplitPage() {
       }
     },
     onError: (error: any) => {
-      console.error("error",error)
-      console.log("error",error)
       const serverMessage =
         error.response?.data?.message ||
         "Runtime connection timeout to backend server.";

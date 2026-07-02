@@ -45,6 +45,7 @@ import {
   Phone,
   MapPin,
 } from "lucide-react";
+import { useStaffDirectoryQuery } from "@/lib/api-hooks";
 
 interface Client {
   id: number;
@@ -56,39 +57,15 @@ interface Client {
   activeLoanCount: number;
 }
 
-// Mock Dataset for Frontend Verification Loops
-const MOCK_CLIENTS: Client[] = [
-  {
-    id: 1,
-    firstName: "John",
-    surname: "Mokoena",
-    email: "john@mokoena.co.za",
-    phoneNumber: "0821112233",
-    address: "Johannesburg",
-    activeLoanCount: 1,
-  },
-  {
-    id: 2,
-    firstName: "Sarah",
-    surname: "Smith",
-    email: "sarah@smith.com",
-    phoneNumber: "0714445566",
-    address: "Pretoria",
-    activeLoanCount: 1,
-  },
-  {
-    id: 3,
-    firstName: "David",
-    surname: "Khumalo",
-    email: "david@khumalo.org",
-    phoneNumber: "0637778899",
-    address: "Soweto",
-    activeLoanCount: 0,
-  },
-];
-
 export default function BorrowersDashboardPage() {
-  const [clients, setClients] = useState<Client[]>(MOCK_CLIENTS);
+  const {
+    data: clientsList = [],
+    isLoading,
+    isRefetching,
+    error,
+  } = useStaffDirectoryQuery();
+
+  const [clients, setClients] = useState<Client[]>(clientsList);
   const [search, setSearch] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -370,7 +347,7 @@ export default function BorrowersDashboardPage() {
                   colSpan={5}
                   className="text-center text-xs text-neutral-400 dark:text-neutral-500 py-10 font-mono"
                 >
-                  No registered borrowers matching your query parameters exist
+                  No registered borrowers matching your Search parameters exist
                   within this company partition context.
                 </TableCell>
               </TableRow>

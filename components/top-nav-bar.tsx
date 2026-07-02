@@ -1,7 +1,5 @@
 "use client";
 
-
-
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -40,7 +38,7 @@ export function TopNavBar() {
 
   const [userEmail, setUserEmail] = useState("");
   const [organization, setOrganization] = useState("");
-console.log()
+
   useEffect(() => {
     setMounted(true);
     if (typeof window !== "undefined") {
@@ -168,7 +166,3 @@ console.log()
     </header>
   );
 }
-
-
-
-
