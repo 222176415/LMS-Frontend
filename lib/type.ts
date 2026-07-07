@@ -2,6 +2,7 @@ export interface LoginResponse {
   success: boolean;
   message?: string;
   data: {
+    organizationName: any;
     token: string;
     email: string;
     organizationId: number;

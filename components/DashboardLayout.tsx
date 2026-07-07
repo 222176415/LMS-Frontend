@@ -28,7 +28,8 @@ import { Loan, FilterBarProps, DashboardHeaderProps } from "@/lib/type";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TrendingUp, AlertTriangle, CheckCircle2 } from "lucide-react";
-import { NotificationCenter, Toast } from "../ui/Notification";
+import {NotificationCenter, Toast} from "@/components/Notification";
+//import { NotificationCenter, Toast } from "../ui/Notification";
 
 interface LoansTableProps {
   isLoading: boolean;
