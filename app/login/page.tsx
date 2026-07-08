@@ -54,10 +54,10 @@ export default function AuthSplitPage() {
           "lms_org_id",
           response.data.organizationId.toString(),
         );
-       // localStorage.setItem(
-         // "org_name",
-          //response.data.organizationName.toString(),
-        //);
+       localStorage.setItem(
+         "organizationName",
+          response.data.organizationName.toString(),
+        );
         console.log("response", response);
         router.push("/dashboard");
       } else {

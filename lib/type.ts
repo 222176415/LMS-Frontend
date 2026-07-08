@@ -112,7 +112,7 @@ export interface FilterBarProps {
   activeTab: "All" | "Active" | "Overdue" | "Paid";
   setActiveTab: (tab: "All" | "Active" | "Overdue" | "Paid") => void;
   isLoading: boolean;
-}
+
 export interface MetricsGridProps {
   isLoading: boolean;
   totalPortfolio: number;
@@ -131,4 +131,49 @@ export interface ServerResponse<T = any> {
 
 export interface UseAutoIssueLoanMutationProps {
   showToast: (type: "success" | "error", message: string) => void;
+}
+
+export interface LoanClient {
+  id: number;
+  firstName: string;
+  surname: string;
+  email: string;
+  phoneNumber: string;
+  address: string;
+}
+
+export interface LoanItem {
+  id: number;
+  principalAmount: number;
+  interestRate: number;
+  totalAmountDue: number;
+  status: "Active" | "Overdue" | "Paid";
+  dueDate: string;
+  client: LoanClient;
+}
+
+// Assuming interface context definitions match your system types
+export interface ClientEntity {
+  firstName: string;
+  surname: string;
+  email: string;
+}
+
+export interface LoanRecord {
+  id: number;
+  client?: LoanClient;
+  principalAmount: number;
+  interestRate: number;
+  totalAmountDue: number;
+  status: "Pending" | "Active" | "Overdue" | "Paid" | string;
+  dueDate: string;
+}
+
+export interface LoansTableProps {
+  isLoading: boolean;
+  loans: LoanRecord[];
+  globalFilter: string;
+  statusFilter: string;
+  currentUserOrgId: number; // Injected to manage Super Admin perimeter controls cleanly
+  onAction: (actionType: "APPROVE" | "DECLINE" | "PAYMENT" | "EDIT" | "DELETE" | "VIEW", loan: LoanRecord) => void;
 }

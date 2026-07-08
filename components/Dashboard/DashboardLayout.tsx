@@ -13,7 +13,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FileSpreadsheet, Plus, RefreshCw, Search } from "lucide-react";
+import {
+  CheckCircle,
+  CreditCard,
+  Edit,
+  Eye,
+  FileSpreadsheet,
+  MoreHorizontal,
+  Plus,
+  RefreshCw,
+  Search,
+  Trash2, XCircle
+} from "lucide-react";
 import {
   Table,
   TableBody,
@@ -22,18 +33,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { Loan, FilterBarProps, DashboardHeaderProps } from "@/lib/type";
+import {Loan, FilterBarProps, DashboardHeaderProps, MetricsGridProps, LoansTableProps} from "@/lib/type";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TrendingUp, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { NotificationCenter, Toast } from "../ui/Notification";
 
-interface LoansTableProps {
-  isLoading: boolean;
-  loans: Loan[];
-}
 
 export function AutoIssueModal() {
   const queryClient = useQueryClient();
@@ -125,16 +145,16 @@ export function AutoIssueModal() {
       <DialogTrigger asChild>
         <Button className="bg-neutral-900 text-white text-xs rounded-md h-9 gap-1.5">
           <Plus size={14} />
-          <span>Auto-Issue Contract</span>
+          <span>New Loan Application</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-xl bg-white rounded-xl shadow-lg">
         <DialogHeader>
           <DialogTitle className="text-base font-bold uppercase">
-            Auto-Issue Capital Flow
+          New Loan 
           </DialogTitle>
           <DialogDescription className="text-xs text-neutral-500">
-            Initialize borrower metrics processing logic.
+           Record new loan
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 pt-2">
@@ -234,8 +254,8 @@ export function AutoIssueModal() {
               disabled={createLoanMutation.isPending}
             >
               {createLoanMutation.isPending
-                ? "Processing Parameters..."
-                : "Confirm Issue"}
+                ? "Processing ..."
+                : "Add loan"}
             </Button>
           </DialogFooter>
         </form>
@@ -243,255 +263,287 @@ export function AutoIssueModal() {
     </Dialog>
   );
 }
-export function LoansTable({ isLoading, loans }: LoansTableProps) {
-  const formatDate = (dateStr: string) =>
-    dateStr ? dateStr.split("T")[0] : "-";
+export function LoansTable({
+                             isLoading,
+                             loans,
+                             globalFilter,
+                             statusFilter,
+                             currentUserOrgId,
+                             onAction
+                           }: LoansTableProps) {
+
+  const formatDate = (dateStr: string) => dateStr ? dateStr.split("T")[0] : "-";
+
+  const filteredLoans = loans.filter((loan) => {
+    const fullName = `${loan.client?.firstName || ""} ${loan.client?.surname || ""}`.toLowerCase();
+    const matchesSearch =
+        fullName.includes(globalFilter.toLowerCase()) ||
+        loan.id.toString().includes(globalFilter) ||
+        (loan.client?.email || "").toLowerCase().includes(globalFilter.toLowerCase());
+
+    const matchesTab = statusFilter === "All" || loan.status === statusFilter;
+    return matchesSearch && matchesTab;
+  });
 
   return (
-    <div className="rounded-xl border border-neutral-200 bg-white overflow-hidden shadow-xs">
-      <Table>
-        <TableHeader className="bg-neutral-50 dark:bg-neutral-950">
-          <TableRow className="border-neutral-200">
-            <TableHead className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 h-10">
-              Contract Ref
-            </TableHead>
-            <TableHead className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 h-10">
-              Borrower Entity
-            </TableHead>
-            <TableHead className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 h-10 text-right">
-              Principal
-            </TableHead>
-            <TableHead className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 h-10 text-center">
-              Rate
-            </TableHead>
-            <TableHead className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 h-10 text-right">
-              Total Owed
-            </TableHead>
-            <TableHead className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 h-10 text-center">
-              Status
-            </TableHead>
-            <TableHead className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 h-10">
-              Due Date
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {isLoading ? (
-            Array.from({ length: 3 }).map((_, idx) => (
-              <TableRow key={`skeleton-${idx}`} className="border-neutral-100">
-                <TableCell>
-                  <Skeleton className="h-4 w-12 bg-neutral-100" />
-                </TableCell>
-                <TableCell>
-                  <div className="space-y-1.5">
-                    <Skeleton className="h-4 w-28 bg-neutral-100" />
-                    <Skeleton className="h-3 w-36 bg-neutral-100" />
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex justify-end">
-                    <Skeleton className="h-4 w-20 bg-neutral-100" />
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex justify-center">
-                    <Skeleton className="h-4 w-8 bg-neutral-100" />
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex justify-end">
-                    <Skeleton className="h-4 w-20 bg-neutral-100" />
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex justify-center">
-                    <Skeleton className="h-5 w-16 rounded-full bg-neutral-100" />
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Skeleton className="h-4 w-20 bg-neutral-100" />
-                </TableCell>
+      <TooltipProvider delayDuration={200}>
+        <div className="rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900 overflow-hidden shadow-xs">
+          <Table>
+            <TableHeader className="bg-neutral-50 dark:bg-neutral-950">
+              <TableRow className="border-neutral-200 dark:border-neutral-800">
+                <TableHead className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 h-10">Borrower Entity</TableHead>
+                <TableHead className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 h-10 text-right">Principal</TableHead>
+                <TableHead className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 h-10 text-center">Rate</TableHead>
+                <TableHead className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 h-10 text-right">Total Owed</TableHead>
+                <TableHead className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 h-10 text-center">Status</TableHead>
+                <TableHead className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 h-10">Due Date</TableHead>
+                <TableHead className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 h-10 text-right pr-6">Actions</TableHead>
               </TableRow>
-            ))
-          ) : loans.length === 0 ? (
-            <TableRow>
-              <TableCell
-                colSpan={7}
-                className="text-center py-10 text-xs text-neutral-400"
-              >
-                No records found matching query context.
-              </TableCell>
-            </TableRow>
-          ) : (
-            loans.map((loan) => (
-              <TableRow
-                key={loan.id}
-                className="hover:bg-neutral-50/50 border-neutral-100 transition-colors"
-              >
-                <TableCell className="font-mono text-xs text-neutral-600">
-                  #{loan.id}
-                </TableCell>
-                <TableCell>
-                  <div className="flex flex-col">
-                    <span className="font-semibold text-neutral-900 text-xs">
-                      {loan.client?.FirstName} {loan.client?.lastName}
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                  Array.from({ length: 3 }).map((_, idx) => (
+                      <TableRow key={`skeleton-${idx}`} className="border-neutral-100 dark:border-neutral-800">
+                        <TableCell><div className="space-y-1.5"><Skeleton className="h-4 w-28" /><Skeleton className="h-3 w-36" /></div></TableCell>
+                        <TableCell><div className="flex justify-end"><Skeleton className="h-4 w-20" /></div></TableCell>
+                        <TableCell><div className="flex justify-center"><Skeleton className="h-4 w-8" /></div></TableCell>
+                        <TableCell><div className="flex justify-end"><Skeleton className="h-4 w-20" /></div></TableCell>
+                        <TableCell><div className="flex justify-center"><Skeleton className="h-5 w-16 rounded-full" /></div></TableCell>
+                        <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                        <TableCell />
+                      </TableRow>
+                  ))
+              ) : filteredLoans.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center py-10 text-xs text-neutral-400 font-mono">
+                      No records found matching query context.
+                    </TableCell>
+                  </TableRow>
+              ) : (
+                  filteredLoans.map((loan) => (
+                      <TableRow key={loan.id} className="hover:bg-neutral-50/50 dark:hover:bg-neutral-950/40 border-neutral-100 dark:border-neutral-800 transition-colors">
+                        <TableCell>
+                          <div className="flex flex-col">
+                      <span className="font-semibold text-neutral-900 dark:text-neutral-100 text-xs">
+                        {loan.client?.firstName} {loan.client?.surname}
+                      </span>
+                            <span className="text-[10px] text-neutral-400 font-mono">#{loan.id} • {loan.client?.email}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right text-xs font-medium text-neutral-900 dark:text-neutral-100">
+                          R {loan.principalAmount?.toLocaleString("en-ZA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </TableCell>
+                        <TableCell className="text-center text-xs text-neutral-600 dark:text-neutral-400 font-mono">{loan.interestRate}%</TableCell>
+                        <TableCell className="text-right text-xs font-bold text-neutral-900 dark:text-neutral-100">
+                          R {loan.totalAmountDue?.toLocaleString("en-ZA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </TableCell>
+                        <TableCell className="text-center">
+                    <span className={cn(
+                        "inline-flex items-center justify-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide border",
+                        loan.status === "Pending" && "bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20",
+                        loan.status === "Active" && "bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20",
+                        loan.status === "Overdue" && "bg-red-50 text-red-700 border-red-100 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20",
+                        loan.status === "Paid" && "bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20"
+                    )}>
+                      {loan.status}
                     </span>
-                    <span className="text-[10px] text-neutral-400">
-                      {loan.client?.email}
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell className="text-right text-xs font-medium text-neutral-900">
-                  R{" "}
-                  {loan.principalAmount?.toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                  })}
-                </TableCell>
-                <TableCell className="text-center text-xs text-neutral-600">
-                  {loan.interestRate}%
-                </TableCell>
-                <TableCell className="text-right text-xs font-bold text-neutral-900">
-                  R{" "}
-                  {loan.totalAmountDue?.toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                  })}
-                </TableCell>
-                <TableCell className="text-center">
-                  <span
-                    className={cn(
-                      "inline-flex items-center justify-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide",
-                      loan.status === "Active" &&
-                        "bg-blue-50 text-blue-700 border border-blue-100",
-                      loan.status === "Overdue" &&
-                        "bg-red-50 text-red-700 border border-red-100",
-                      loan.status === "Paid" &&
-                        "bg-emerald-50 text-emerald-700 border border-emerald-100",
-                    )}
-                  >
-                    {loan.status}
-                  </span>
-                </TableCell>
-                <TableCell className="text-xs text-neutral-500 font-medium">
-                  {formatDate(loan.dueDate)}
-                </TableCell>
-              </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
-    </div>
+                        </TableCell>
+                        <TableCell className="text-xs text-neutral-500 dark:text-neutral-400 font-medium font-mono">{formatDate(loan.dueDate)}</TableCell>
+
+                        {/* 🛠️ UPGRADED ACTIONS MATRIX COLUMN */}
+                        <TableCell className="text-right pr-6">
+                          <DropdownMenu>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" className="h-7 w-7 p-0 hover:bg-neutral-100 dark:hover:bg-neutral-800">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                              </TooltipTrigger>
+                              <TooltipContent  side="left" className="text-[11px] font-medium bg-neutral-950 text-white dark:bg-white dark:text-neutral-950">
+                                Open workflow action desk for Loan #{loan.id}
+                              </TooltipContent>
+                            </Tooltip>
+
+                            <DropdownMenuContent align="end" className="w-52 text-xs border-neutral-200 dark:border-neutral-800">
+                              <DropdownMenuLabel className="text-[10px] font-bold uppercase text-neutral-400 tracking-wider">Servicing Suite</DropdownMenuLabel>
+
+                              <DropdownMenuItem onClick={() => onAction("VIEW", loan)} className="gap-2 cursor-pointer">
+                                <Eye size={13} className="text-neutral-400" /> View Statement
+                              </DropdownMenuItem>
+
+                              {/* WORKFLOW PHASE A: PENDING APPLICATIONS */}
+                              {loan.status === "Pending" && (
+                                  <>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem onClick={() => onAction("APPROVE", loan)} className="gap-2 cursor-pointer text-emerald-600 dark:text-emerald-400 focus:text-emerald-700">
+                                      <CheckCircle size={13} /> Approve Underwriting
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => onAction("DECLINE", loan)} className="gap-2 cursor-pointer text-red-600 dark:text-red-400 focus:text-red-700">
+                                      <XCircle size={13} /> Decline Application
+                                    </DropdownMenuItem>
+                                  </>
+                              )}
+
+                              {/* WORKFLOW PHASE B: CASHFLOW PROCESSING (ACTIVE / OVERDUE) */}
+                              {(loan.status === "Active" || loan.status === "Overdue") && (
+                                  <>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem onClick={() => onAction("PAYMENT", loan)} className="gap-2 cursor-pointer font-semibold text-blue-600 dark:text-blue-400 focus:text-blue-700">
+                                      <CreditCard size={13} /> Collect Payment
+                                    </DropdownMenuItem>
+                                  </>
+                              )}
+
+                              {/* MANAGEMENT CRITICAL PATH */}
+                              <DropdownMenuSeparator />
+                              <DropdownMenuLabel className="text-[10px] font-bold uppercase text-neutral-400 tracking-wider">System Parameters</DropdownMenuLabel>
+
+                              <DropdownMenuItem onClick={() => onAction("EDIT", loan)} className="gap-2 cursor-pointer">
+                                <Edit size={13} className="text-neutral-400" /> Alter Structural Terms
+                              </DropdownMenuItem>
+
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <div> {/* Wrapper div ensures disabled button state still catches events for tooltips to render */}
+                                    <DropdownMenuItem
+                                        onClick={() => onAction("DELETE", loan)}
+                                        disabled={currentUserOrgId === 1}
+                                        className="gap-2 cursor-pointer text-neutral-400 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/20 disabled:opacity-40 disabled:cursor-not-allowed"
+                                    >
+                                      <Trash2 size={13} /> Drop From Ledger
+                                    </DropdownMenuItem>
+                                  </div>
+                                </TooltipTrigger>
+                                {currentUserOrgId === 1 && (
+                                    <TooltipContent  side="left" className="text-[10px] max-w-[180px] leading-relaxed bg-red-950 text-red-200 border-red-900 font-mono">
+                                      Perimeter Lockdown: Data deletions cannot be committed from global management nodes (Org 1).
+                                    </TooltipContent>
+                                )}
+                              </Tooltip>
+
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                  ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </TooltipProvider>
   );
 }
-
 export function FilterBar({
-  search,
-  setSearch,
-  activeTab,
-  setActiveTab,
-  isLoading,
-}: FilterBarProps) {
+                            search,
+                            setSearch,
+                            activeTab,
+                            setActiveTab,
+                            isLoading,
+                          }: FilterBarProps) {
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-neutral-100 pb-4">
-      <div className="flex items-center gap-1 border border-neutral-200 rounded-md px-3 bg-white w-full sm:w-80 h-9">
-        <Search size={14} className="text-neutral-400 shrink-0" />
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by client or reference..."
-          className="text-xs bg-transparent focus:outline-none w-full text-neutral-800"
-          disabled={isLoading}
-        />
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-neutral-100 pb-4">
+        <div className="flex items-center gap-1 border border-neutral-200 rounded-md px-3 bg-white w-full sm:w-80 h-9">
+          <Search size={14} className="text-neutral-400 shrink-0" />
+          <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search by client or reference..."
+              className="text-xs bg-transparent focus:outline-none w-full text-neutral-800"
+              disabled={isLoading}
+          />
+        </div>
+        <div className="flex items-center gap-1 bg-neutral-100 p-1 rounded-md border border-neutral-200/60 self-start sm:self-auto">
+          {(["All", "Active", "Overdue", "Paid"] as const).map((tab) => (
+              <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  disabled={isLoading}
+                  className={cn(
+                      "text-xs px-3 py-1.5 font-medium rounded-sm transition-all",
+                      activeTab === tab
+                          ? "bg-white text-neutral-900 shadow-xs"
+                          : "text-neutral-500 hover:text-neutral-900",
+                      isLoading && "opacity-50 cursor-not-allowed",
+                  )}
+              >
+                {tab}
+              </button>
+          ))}
+        </div>
       </div>
-      <div className="flex items-center gap-1 bg-neutral-100 p-1 rounded-md border border-neutral-200/60 self-start sm:self-auto">
-        {(["All", "Active", "Overdue", "Paid"] as const).map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            disabled={isLoading}
-            className={cn(
-              "text-xs px-3 py-1.5 font-medium rounded-sm transition-all",
-              activeTab === tab
-                ? "bg-white text-neutral-900 shadow-xs"
-                : "text-neutral-500 hover:text-neutral-900",
-              isLoading && "opacity-50 cursor-not-allowed",
-            )}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
-    </div>
   );
 }
-
 export function MetricsGrid({
-  isLoading,
-  totalPortfolio,
-  totalOverdue,
-  collectedCapital,
-}: MetricsGridProps) {
+                              isLoading,
+                              totalPortfolio,
+                              totalOverdue,
+                              collectedCapital,
+                            }: MetricsGridProps) {
+  // Configured with standard South African formatting localization rules
   const formatCurrency = (val: number) =>
-    `R ${val.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+      `R ${val.toLocaleString("en-ZA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   return (
-    <div className="grid gap-4 md:grid-cols-3">
-      {/* Portfolio Card */}
-      <Card className="shadow-sm border-neutral-200">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-xs font-bold uppercase tracking-wider text-neutral-400">
-            Total Portfolio Out
-          </CardTitle>
-          <TrendingUp className="h-4 w-4 text-neutral-400" />
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <Skeleton className="h-7 w-32 bg-neutral-200" />
-          ) : (
-            <div className="text-2xl font-bold text-neutral-900 dark:text-white">
-              {formatCurrency(totalPortfolio)}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <div className="grid gap-4 md:grid-cols-3">
+        {/* Portfolio Card */}
+        <Card className="shadow-sm border-neutral-200">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-xs font-bold uppercase tracking-wider text-neutral-400">
+              Total Portfolio Out
+            </CardTitle>
+            <TrendingUp className="h-4 w-4 text-neutral-400" />
+          </CardHeader>
+          <CardContent>
+            {isLoading ? (
+                <Skeleton className="h-7 w-32 bg-neutral-200" />
+            ) : (
+                <div className="text-2xl font-bold text-neutral-900 dark:text-white">
+                  {formatCurrency(totalPortfolio)}
+                </div>
+            )}
+          </CardContent>
+        </Card>
 
-      {/* Overdue Risk Card */}
-      <Card className="shadow-sm border-neutral-200">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-xs font-bold uppercase tracking-wider text-neutral-400">
-            Overdue Risk Exposure
-          </CardTitle>
-          <AlertTriangle className="h-4 w-4 text-amber-500" />
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <Skeleton className="h-7 w-32 bg-neutral-200" />
-          ) : (
-            <div className="text-2xl font-bold text-neutral-900 dark:text-white">
-              {formatCurrency(totalOverdue)}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+        {/* Overdue Risk Card */}
+        <Card className="shadow-sm border-neutral-200">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-xs font-bold uppercase tracking-wider text-neutral-400">
+              Overdue Risk Exposure
+            </CardTitle>
+            <AlertTriangle className="h-4 w-4 text-amber-500" />
+          </CardHeader>
+          <CardContent>
+            {isLoading ? (
+                <Skeleton className="h-7 w-32 bg-neutral-200" />
+            ) : (
+                <div className="text-2xl font-bold text-neutral-900 dark:text-white">
+                  {formatCurrency(totalOverdue)}
+                </div>
+            )}
+          </CardContent>
+        </Card>
 
-      {/* Collected Capital Card */}
-      <Card className="shadow-sm border-neutral-200">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-xs font-bold uppercase tracking-wider text-neutral-400">
-            Collected Capital
-          </CardTitle>
-          <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <Skeleton className="h-7 w-32 bg-neutral-200" />
-          ) : (
-            <div className="text-2xl font-bold text-neutral-900 dark:text-white">
-              {formatCurrency(collectedCapital)}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+        {/* Collected Capital Card */}
+        <Card className="shadow-sm border-neutral-200">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-xs font-bold uppercase tracking-wider text-neutral-400">
+              Collected Capital
+            </CardTitle>
+            <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+          </CardHeader>
+          <CardContent>
+            {isLoading ? (
+                <Skeleton className="h-7 w-32 bg-neutral-200" />
+            ) : (
+                <div className="text-2xl font-bold text-neutral-900 dark:text-white">
+                  {formatCurrency(collectedCapital)}
+                </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
   );
 }
 

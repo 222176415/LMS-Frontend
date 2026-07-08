@@ -45,7 +45,7 @@ export function TopNavBar() {
       setUserEmail(
         localStorage.getItem("lms_user_email") || "operator@lms.com",
       );
-      setOrganization(localStorage.getItem("org_name") || "1001");
+      setOrganization(localStorage.getItem("organizationName") || "1001");
     }
   }, []);
 
