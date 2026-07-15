@@ -146,7 +146,7 @@ export default function BorrowersDashboardPage() {
   ).length;
 
   return (
-      <div className="space-y-8 transition-colors duration-200">
+      <div className="space-y-8 transition-colors duration-200 md:p-4 p-2">
         {/* HEADER CONTROLS WINDOW */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>

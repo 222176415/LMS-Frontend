@@ -67,7 +67,7 @@ export default function CoreDashboardIndex() {
       : ["#171717", "#737373", "#e5e5e5"]; // Light mode accents
 
   return (
-    <div className="space-y-8 transition-colors duration-200">
+    <div className="space-y-8 transition-colors duration-200 md:p-4 p-2">
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-extrabold tracking-tight md:text-3xl uppercase text-neutral-900 dark:text-white">
           Workspace Overview
