@@ -50,6 +50,8 @@ export default function AuthSplitPage() {
       if (response.success && response.data.token) {
         localStorage.setItem("lms_bearer_token", response.data.token);
         localStorage.setItem("lms_user_email", response.data.email);
+        localStorage.setItem("lms_user_name", response.data.fullNames);
+        localStorage.setItem("lms_user_role", response.data.role);
         localStorage.setItem(
           "lms_org_id",
           response.data.organizationId.toString(),

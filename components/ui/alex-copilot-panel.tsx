@@ -39,15 +39,7 @@ export function AlexCopilotPanel({ isOpen, onClose }: AlexCopilotPanelProps) {
 
     return (
         <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-[420px] p-4 h-full flex flex-col pointer-events-none">
-
-            {/* 
-        GLASSMORPHIC PANEL CONTAINMENT:
-        Combines background opacity, high-level backdrop-blur, and translucent borders
-        to create the ultimate frosting depth effect.
-      */}
             <div className="flex flex-col h-full w-full rounded-2xl border border-white/20 dark:border-neutral-800/40 bg-white/70 dark:bg-neutral-950/60 backdrop-blur-xl shadow-2xl pointer-events-auto overflow-hidden animate-pulse-glow">
-
-                {/* Header */}
                 <div className="p-4 border-b border-neutral-200/50 dark:border-neutral-800/50 flex items-center justify-between bg-white/40 dark:bg-neutral-900/40">
                     <div className="flex items-center gap-2">
                         <span className="text-lg">🤖</span>

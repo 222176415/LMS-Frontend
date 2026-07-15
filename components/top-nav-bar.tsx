@@ -35,7 +35,7 @@ export function TopNavBar() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-
+  const [firstName, sellFirstName] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [organization, setOrganization] = useState("");
 
@@ -46,6 +46,8 @@ export function TopNavBar() {
         localStorage.getItem("lms_user_email") || "operator@lms.com",
       );
       setOrganization(localStorage.getItem("organizationName") || "1001");
+      const name = localStorage.getItem("lms_user_name");
+      
     }
   }, []);
 
@@ -98,7 +100,7 @@ export function TopNavBar() {
                 Authenticated Profile
               </span>
               <span className="block font-semibold text-neutral-800 dark:text-neutral-200 truncate mt-0.5 font-mono">
-                {userEmail}
+                {firstName}
               </span>
             </DropdownMenuLabel>
 
