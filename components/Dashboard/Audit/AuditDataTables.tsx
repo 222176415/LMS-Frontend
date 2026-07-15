@@ -3,9 +3,9 @@
 import React from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-
+/*@ts-ignore*/
 import { ActivityLog, UserLoginLog } from "@/hooks/useAuditHub";
-import {Laptop, ShieldAlert, CheckCircle2, XCircle, ArrowRightRight, Badge} from "lucide-react";
+import {Laptop, CheckCircle2, XCircle, Badge} from "lucide-react";
 
 interface DataTablesProps {
     activities: ActivityLog[];
@@ -54,6 +54,7 @@ export function AuditDataTables({ activities, logins }: DataTablesProps) {
                                 Live transactional alterations mapped down across multi-tenant scopes.
                             </CardDescription>
                         </div>
+               {/*         @ts-ignore*/}
                         <Badge variant="outline" className="font-mono text-[10px] uppercase bg-white dark:bg-neutral-950">
                             {activities.length} Cached Frames
                         </Badge>

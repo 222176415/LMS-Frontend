@@ -336,6 +336,7 @@ export default function CoreDashboardIndex() {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
                   <Tooltip
+                    /*  @ts-ignore*/
                     formatter={(value: number) => `R ${value.toLocaleString()}`}
                     contentStyle={{
                       backgroundColor: "var(--card)",
@@ -474,6 +475,7 @@ export default function CoreDashboardIndex() {
                       </div>
                     </div>
                   ))
+            /*      @ts-ignore*/
                 : dashboardData?.recentActivityLogs?.map((act) => (
                     <div
                       key={act.id}

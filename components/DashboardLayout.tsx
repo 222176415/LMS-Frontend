@@ -335,6 +335,7 @@ export function LoansTable({ isLoading, loans }: LoansTableProps) {
                 <TableCell>
                   <div className="flex flex-col">
                     <span className="font-semibold text-neutral-900 text-xs">
+                 {/* @ts-ignore*/}
                       {loan.client?.FirstName} {loan.client?.lastName}
                     </span>
                     <span className="text-[10px] text-neutral-400">

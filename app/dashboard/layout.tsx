@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { TopNavBar } from "@/components/top-nav-bar";
 import { SidebarNav } from "@/components/sidebar-nav";
+import {AlexCopilotPanel} from "@/components/ui/alex-copilot-panel";
 
 export default function DashboardLayout({
                                           children,
@@ -11,7 +12,8 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAiOpen, setIsAiOpen] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("lms_bearer_token");
@@ -84,11 +86,19 @@ export default function DashboardLayout({
                       </div>
                   </div>
               </aside>
-            <main className="flex-1 lg:pl-64 min-w-0">
-              <div>{children}</div>
-            </main>
+                <main className="flex-1 lg:pl-64 min-w-0 relative">
+                    <div>{children}</div>
+                    <button
+                        onClick={() => setIsAiOpen(!isAiOpen)}
+                        className="fixed bottom-6 right-6 z-40 flex items-center gap-2 px-4 py-2.5 rounded-full border border-purple-500/30 bg-neutral-900/80 dark:bg-neutral-100/90 text-white dark:text-neutral-900 shadow-lg backdrop-blur hover:scale-105 transition-transform font-sans text-xs font-semibold"
+                    >
+                        <span>✨</span> Ask Alex
+                    </button>
+                </main>
+
+            </div>
           </div>
-        </div>
+          <AlexCopilotPanel isOpen={isAiOpen} onClose={() => setIsAiOpen(false)} />
       </div>
   );
 }

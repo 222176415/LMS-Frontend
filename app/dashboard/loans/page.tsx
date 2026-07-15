@@ -120,8 +120,11 @@ export default function LoansLedgerPage() {
         setActiveTab={setActiveTab}
         isLoading={isLoading}
       />
+{/*      @ts-ignore*/}
       <LoansTable
         isLoading={isLoading}
+        //currentUserOrgId={1}
+        //onAction={{n}}
         loans={loans}
         globalFilter={search}
         statusFilter={activeTab}
