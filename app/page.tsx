@@ -39,7 +39,7 @@ export default function LandingPage() {
         </h1>
 
         <p className="max-w-2xl mx-auto text-neutral-500 text-lg md:text-xl mb-12 leading-relaxed">
-          The high-performance engine for secure loan issuance, automated
+          The high-performance <span className="text-green-600">AI Powered</span> engine for secure loan issuance, automated
           tracking, and real-time audit logs. Engineered for speed, built for
           reliability.
         </p>

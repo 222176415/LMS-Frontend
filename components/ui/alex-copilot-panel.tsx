@@ -12,24 +12,34 @@ export function AlexCopilotPanel({ isOpen, onClose }: AlexCopilotPanelProps) {
     const pathname = usePathname();
     const [messages, setMessages] = useState<Array<{ sender: "user" | "alex"; text: string }>>([]);
     const [input, setInput] = useState("");
+    const [loggedInUserName, setloggedInUserName] = useState("");
 
-    // Map route names to friendly context targets for the RAG prompt engine
     const getContextMetadata = (path: string) => {
-        if (path.includes("/loans")) return { title: "Active Loans Schema", icon: "💵", dbNode: "Tenant_Loan_Ledgers" };
+        if (path.includes("/loans")) return { title: "Active Loans", icon: "💵", dbNode: "Track & Manage Loans" };
         if (path.includes("/analytics")) return { title: "LMS Analytics Node", icon: "📈", dbNode: "Aggregate_Yields" };
         if (path.includes("/settings")) return { title: "Security Protocols", icon: "🛡️", dbNode: "System_Config" };
+        if (path.includes("/clients")) return { title: "clients Overview", icon: "👥", dbNode:"All Borrowers"};
+        if (path.includes("/users")) return { title: "Users Overview", icon: "👥", dbNode:"System Users"};
+        if (path.includes("/organizations")) return { title: "Organizations Overview", icon: "🏢", dbNode:"Onboarded Organizations" };
+        if (path.includes("/audit")) return { title: "System Audit & Security Guard", icon: "🛡️", dbNode: "System Audit logs" };
         return { title: "Dashboard Overview", icon: "🌐", dbNode: "User_Session_Map" };
     };
 
     const context = getContextMetadata(pathname);
+    // localStorage.setItem("lms_user_name", response.data.fullNames);
+   // localStorage.setItem("lms_user_role", response.data.role);
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            setloggedInUserName(localStorage.getItem("lms_user_name") || "none");
+        }
+    }, []);
 
-    // Auto-inject system greeting when panel opens with page context
     useEffect(() => {
         if (isOpen && messages.length === 0) {
             setMessages([
                 {
                     sender: "alex",
-                    text: `Hi Themba! 👋 I've mapped to your current view: **${context.title}**. Ask me to trace loans, check risk rules, or parse system parameters for this node.`
+                    text: `Hi ${loggedInUserName}! 👋 You're currently looking at: ${context.title}. If you need any Information Ask Me...!`
                 }
             ]);
         }
@@ -89,8 +99,6 @@ export function AlexCopilotPanel({ isOpen, onClose }: AlexCopilotPanelProps) {
                         </div>
                     ))}
                 </div>
-
-                {/* Input Bar */}
                 <div className="p-4 border-t border-neutral-200/50 dark:border-neutral-800/50 bg-white/30 dark:bg-neutral-900/30">
                     <form
                         onSubmit={(e) => {

@@ -316,7 +316,7 @@ export function LoansTable({
               ) : filteredLoans.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={7} className="text-center py-10 text-xs text-neutral-400 font-mono">
-                      No records found matching query context.
+                      No records found.
                     </TableCell>
                   </TableRow>
               ) : (
@@ -555,7 +555,7 @@ export function DashboardHeader({
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-extrabold tracking-tight md:text-3xl uppercase text-neutral-900">
+          <h1 className="text-2xl font-extrabold tracking-tight md:text-3xl uppercase text-neutral-900 dark:text-white">
             Loans Ledger
           </h1>
           {isRefetching && (

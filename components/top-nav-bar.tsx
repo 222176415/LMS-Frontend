@@ -65,7 +65,7 @@ export function TopNavBar() {
         <div className="hidden md:inline-block h-4 w-[1px] bg-neutral-200 dark:bg-neutral-800" />
         <div className="hidden md:flex items-center gap-1.5 px-2 py-0.5 border border-green-200 dark:border-green-800 bg-neutral-50 dark:bg-neutral-950 rounded text-[10px] font-mono text-neutral-400 dark:text-neutral-500 uppercase">
           <Building size={10} />
-          <span className="text-green-600">Organization: {organization}</span>
+          <span className="text-green-600">{organization}</span>
         </div>
       </div>
 
