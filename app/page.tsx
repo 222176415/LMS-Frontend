@@ -1,10 +1,19 @@
+import Threads from "@/components/Threads";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export default function LandingPage() {
   return (
-    <div className="relative min-h-screen bg-white text-neutral-900 font-sans selection:bg-neutral-200">
-      {/* Subtle Background Pattern */}
+    <div className="relative min-h-screen text-neutral-900 font-sans selection:bg-neutral-200 overflow-hidden">
+      {/* Animated Threads Background */}
+      <div className="absolute inset-0 w-full h-full z-0">
+        <Threads
+          amplitude={1}
+          distance={0}
+          enableMouseInteraction
+          color={[0.6, 0.2, 0.9]}
+        />
+      </div>
       <div className="absolute inset-0 bg-grid-pattern opacity-40 pointer-events-none" />
 
       {/* Navigation */}
