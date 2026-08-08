@@ -3,6 +3,22 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Threads from "@/components/Threads";
 export default function LandingPage() {
+  const recipient = "Ntimanethemba27@gmail.com";
+  const subject = encodeURIComponent("Request for LMS.Core Access - [Your Company/Name]");
+  const body = encodeURIComponent(
+      `Hi LMS.Core Team,
+
+I would like to request access to the LMS.Core platform.
+
+- Name: [Your Full Name]
+- Organization: [Your Organization/Company]
+- Use Case / Details: [Brief description of your requirements]
+
+Thank you!
+`
+  );
+
+  const mailtoUrl = `mailto:${recipient}?subject=${subject}&body=${body}`;
   return (
       <div className="relative min-h-screen text-neutral-900 font-sans selection:bg-neutral-200 overflow-hidden">
         {/* Animated Threads Background */}
@@ -52,17 +68,21 @@ export default function LandingPage() {
           reliability.
         </p>
         <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
-          <Button
-            size="lg"
-            className="bg-neutral-900 text-white rounded-lg h-14 px-10 text-base"
-          >
-            Request Access
-          </Button>
+          {/* Updated Request Access Button */}
+          <a href={mailtoUrl} className="w-full md:w-auto">
+            <Button
+                size="lg"
+                className="w-full md:w-auto bg-neutral-900 text-white rounded-lg h-14 px-10 text-base"
+            >
+              Request Access
+            </Button>
+          </a>
+
           <Link href="/docs" className="w-full md:w-auto">
             <Button
-              size="lg"
-              variant="outline"
-              className="w-full rounded-md h-14 px-10 border-neutral-200 text-base font-medium hover:bg-neutral-50 transition-all"
+                size="lg"
+                variant="outline"
+                className="w-full rounded-md h-14 px-10 border-neutral-200 text-base font-medium hover:bg-neutral-50 transition-all"
             >
               Read Documentation
             </Button>
