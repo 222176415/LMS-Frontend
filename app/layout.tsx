@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import { ThemeProvider } from "next-themes"; // CORE THEME MODULE IMPORT
-import NextTopLoader from 'nextjs-toploader';
 import { cn } from "@/lib/utils";
 import Providers from "@/components/providers";
 import "./globals.css";
@@ -30,7 +29,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <html
       lang="en-ZA"
@@ -46,15 +44,6 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-background text-foreground transition-colors duration-200">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          <NextTopLoader
-             // ref={topLoaderRef}
-              color="#2299DD"
-              height={3}
-              crawlSpeed={200}
-              initialPosition={0.08}
-              crawl
-              showSpinner={true}
-          />
           <Providers>{children}</Providers>
         </ThemeProvider>
       </body>

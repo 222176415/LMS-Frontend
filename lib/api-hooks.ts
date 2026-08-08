@@ -111,3 +111,13 @@ export function useOnboardStaffMutation() {
     },
   });
 }
+
+export function useOrganizationsDirectoryQuery() {
+  return useQuery({
+    queryKey: ["organizations"],
+    queryFn: async () => {
+      const response = await apiClient.get("/Organizations");
+      return response.data.data;
+    },
+  });
+}

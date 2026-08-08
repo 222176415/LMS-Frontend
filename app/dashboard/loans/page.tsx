@@ -73,14 +73,14 @@ export default function LoansLedgerPage() {
     error,
   } = useLoansLedgerQuery();
 
-  const filteredLoans = loans.filter((l) => {
-    const matchesSearch =
-      `${l.client?.firstName || ""} ${l.client?.lastName || ""} ${l.id}`
-        .toLowerCase()
-        .includes(search.toLowerCase());
-    const matchesTab = activeTab === "All" || l.status === activeTab;
-    return matchesSearch && matchesTab;
-  });
+  // const filteredLoans = loans.filter((l) => {
+  //   const matchesSearch =
+  //     `${l.client?.firstName || ""} ${l.client?.lastName || ""} ${l.id}`
+  //       .toLowerCase()
+  //       .includes(search.toLowerCase());
+  //   const matchesTab = activeTab === "All" || l.status === activeTab;
+  //   return matchesSearch && matchesTab;
+  // });
 
   const totalPortfolio = loans.reduce(
     (acc, curr) => acc + (curr.principalAmount || 0),
@@ -120,8 +120,11 @@ export default function LoansLedgerPage() {
         setActiveTab={setActiveTab}
         isLoading={isLoading}
       />
+{/*      @ts-ignore*/}
       <LoansTable
         isLoading={isLoading}
+        //currentUserOrgId={1}
+        //onAction={{n}}
         loans={loans}
         globalFilter={search}
         statusFilter={activeTab}

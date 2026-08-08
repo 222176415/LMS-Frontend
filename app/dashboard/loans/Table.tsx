@@ -239,7 +239,7 @@ export function LoansTable({
                 colSpan={columns.length}
                 className="text-center py-10 text-xs text-neutral-400"
               >
-                No records found matching query context.
+                No records found.
               </TableCell>
             </TableRow>
           ) : (

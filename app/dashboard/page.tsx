@@ -67,7 +67,7 @@ export default function CoreDashboardIndex() {
       : ["#171717", "#737373", "#e5e5e5"]; // Light mode accents
 
   return (
-    <div className="space-y-8 transition-colors duration-200">
+    <div className="space-y-8 transition-colors duration-200 md:p-4 p-2">
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-extrabold tracking-tight md:text-3xl uppercase text-neutral-900 dark:text-white">
           Workspace Overview
@@ -336,6 +336,7 @@ export default function CoreDashboardIndex() {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
                   <Tooltip
+                    /*  @ts-ignore*/
                     formatter={(value: number) => `R ${value.toLocaleString()}`}
                     contentStyle={{
                       backgroundColor: "var(--card)",
@@ -474,6 +475,7 @@ export default function CoreDashboardIndex() {
                       </div>
                     </div>
                   ))
+            /*      @ts-ignore*/
                 : dashboardData?.recentActivityLogs?.map((act) => (
                     <div
                       key={act.id}

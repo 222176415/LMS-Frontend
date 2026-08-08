@@ -28,7 +28,8 @@ import { Loan, FilterBarProps, DashboardHeaderProps } from "@/lib/type";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TrendingUp, AlertTriangle, CheckCircle2 } from "lucide-react";
-import { NotificationCenter, Toast } from "../ui/Notification";
+import {NotificationCenter, Toast} from "@/components/Notification";
+//import { NotificationCenter, Toast } from "../ui/Notification";
 
 interface LoansTableProps {
   isLoading: boolean;
@@ -319,7 +320,7 @@ export function LoansTable({ isLoading, loans }: LoansTableProps) {
                 colSpan={7}
                 className="text-center py-10 text-xs text-neutral-400"
               >
-                No records found matching query context.
+                No records found.
               </TableCell>
             </TableRow>
           ) : (
@@ -334,6 +335,7 @@ export function LoansTable({ isLoading, loans }: LoansTableProps) {
                 <TableCell>
                   <div className="flex flex-col">
                     <span className="font-semibold text-neutral-900 text-xs">
+                 {/* @ts-ignore*/}
                       {loan.client?.FirstName} {loan.client?.lastName}
                     </span>
                     <span className="text-[10px] text-neutral-400">
@@ -424,7 +426,7 @@ export function FilterBar({
   );
 }
 
-export function MetricsGrid({
+/*export function MetricsGrid({
   isLoading,
   totalPortfolio,
   totalOverdue,
@@ -435,7 +437,7 @@ export function MetricsGrid({
 
   return (
     <div className="grid gap-4 md:grid-cols-3">
-      {/* Portfolio Card */}
+      {/!* Portfolio Card *!/}
       <Card className="shadow-sm border-neutral-200">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-xs font-bold uppercase tracking-wider text-neutral-400">
@@ -454,7 +456,7 @@ export function MetricsGrid({
         </CardContent>
       </Card>
 
-      {/* Overdue Risk Card */}
+      {/!* Overdue Risk Card *!/}
       <Card className="shadow-sm border-neutral-200">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-xs font-bold uppercase tracking-wider text-neutral-400">
@@ -473,7 +475,7 @@ export function MetricsGrid({
         </CardContent>
       </Card>
 
-      {/* Collected Capital Card */}
+      {/!* Collected Capital Card *!/}
       <Card className="shadow-sm border-neutral-200">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-xs font-bold uppercase tracking-wider text-neutral-400">
@@ -493,7 +495,7 @@ export function MetricsGrid({
       </Card>
     </div>
   );
-}
+}*/
 
 export function DashboardHeader({
   isRefetching,

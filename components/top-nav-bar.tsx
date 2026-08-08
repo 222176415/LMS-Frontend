@@ -1,7 +1,5 @@
 "use client";
 
-
-
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -37,17 +35,19 @@ export function TopNavBar() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-
+  const [firstName, sellFirstName] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [organization, setOrganization] = useState("");
-console.log()
+
   useEffect(() => {
     setMounted(true);
     if (typeof window !== "undefined") {
       setUserEmail(
         localStorage.getItem("lms_user_email") || "operator@lms.com",
       );
-      setOrganization(localStorage.getItem("org_name") || "1001");
+      setOrganization(localStorage.getItem("organizationName") || "1001");
+      const name = localStorage.getItem("lms_user_name");
+      
     }
   }, []);
 
@@ -65,7 +65,7 @@ console.log()
         <div className="hidden md:inline-block h-4 w-[1px] bg-neutral-200 dark:bg-neutral-800" />
         <div className="hidden md:flex items-center gap-1.5 px-2 py-0.5 border border-green-200 dark:border-green-800 bg-neutral-50 dark:bg-neutral-950 rounded text-[10px] font-mono text-neutral-400 dark:text-neutral-500 uppercase">
           <Building size={10} />
-          <span className="text-green-600">Organization: {organization}</span>
+          <span className="text-green-600">{organization}</span>
         </div>
       </div>
 
@@ -100,7 +100,7 @@ console.log()
                 Authenticated Profile
               </span>
               <span className="block font-semibold text-neutral-800 dark:text-neutral-200 truncate mt-0.5 font-mono">
-                {userEmail}
+                {firstName}
               </span>
             </DropdownMenuLabel>
 
@@ -168,7 +168,3 @@ console.log()
     </header>
   );
 }
-
-
-
-

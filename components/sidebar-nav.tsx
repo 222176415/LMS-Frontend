@@ -30,7 +30,7 @@ export function SidebarNav() {
   ] as const;
 
   return (
-    <nav className="space-y-1">
+    <nav className="space-y-1 ">
       <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 px-3 mb-3">
         Operations Matrix
       </p>
