@@ -8,7 +8,6 @@ import { useMutation } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
 import { LoginResponse } from "@/lib/type";
 
-// Shadcn UI Components
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -50,7 +49,7 @@ export default function AuthSplitPage() {
       if (response.success && response.data.token) {
         localStorage.setItem("lms_bearer_token", response.data.token);
         localStorage.setItem("lms_user_email", response.data.email);
-        localStorage.setItem("lms_user_name", response.data.fullNames);
+        localStorage.setItem("lms_user_name", response.data.fullNames ?? "");
         localStorage.setItem("lms_user_role", response.data.role);
         localStorage.setItem(
           "lms_org_id",
@@ -140,9 +139,13 @@ export default function AuthSplitPage() {
                 VAT configurations on generation—fully immune to global changes.
               </span>
             </div>
+            <div className="flex items-start gap-2.5 text-xs text-neutral-300">
+              <span className="text-neutral-500 font-mono">[✓]</span>
+              <span><strong>AI Search Chatbot:</strong> Ask the integrated AI chatbot about your data or anything else within the system.</span>
+            </div>
           </div>
         </div>
-
+      
         <div className="relative z-10 flex items-center justify-between text-[10px] tracking-wider text-neutral-600 uppercase font-mono">
           <span>Secured Workspace Engine</span>
           <span>3.0.0</span>

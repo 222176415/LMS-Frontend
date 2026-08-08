@@ -1,11 +1,19 @@
-'use client';
+
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-
+import Threads from "@/components/Threads";
 export default function LandingPage() {
   return (
-    <div className="relative min-h-screen bg-white text-neutral-900 font-sans selection:bg-neutral-200">
-      {/* Subtle Background Pattern */}
+      <div className="relative min-h-screen text-neutral-900 font-sans selection:bg-neutral-200 overflow-hidden">
+        {/* Animated Threads Background */}
+        <div className="absolute inset-0 w-full h-full z-0">
+          <Threads
+              amplitude={1}
+              distance={0}
+              enableMouseInteraction
+           
+          />
+        </div>
       <div className="absolute inset-0 bg-grid-pattern opacity-40 pointer-events-none" />
 
       {/* Navigation */}
@@ -39,7 +47,7 @@ export default function LandingPage() {
         </h1>
 
         <p className="max-w-2xl mx-auto text-neutral-500 text-lg md:text-xl mb-12 leading-relaxed">
-          The high-performance <span className="text-green-600">AI Powered</span> engine for secure loan issuance, automated
+          The high-performance <span className="text-green-700">AI Powered</span> engine for secure loan issuance, automated
           tracking, and real-time audit logs. Engineered for speed, built for
           reliability.
         </p>

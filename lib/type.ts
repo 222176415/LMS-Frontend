@@ -6,6 +6,8 @@ export interface LoginResponse {
     token: string;
     email: string;
     organizationId: number;
+    role:string;
+    fullNames?:string;
   };
 }
 export interface OnboardStaffPayload {
@@ -112,7 +114,7 @@ export interface FilterBarProps {
   activeTab: "All" | "Active" | "Overdue" | "Paid";
   setActiveTab: (tab: "All" | "Active" | "Overdue" | "Paid") => void;
   isLoading: boolean;
-
+}
 export interface MetricsGridProps {
   isLoading: boolean;
   totalPortfolio: number;

@@ -54,7 +54,7 @@ export function AlexCopilotPanel({ isOpen, onClose }: AlexCopilotPanelProps) {
                     <div className="flex items-center gap-2">
                         <span className="text-lg">🤖</span>
                         <div>
-                            <h3 className="font-bold text-sm tracking-tight text-neutral-800 dark:text-neutral-100">Alex Co-Pilot</h3>
+                            <h3 className="font-bold text-sm tracking-tight text-neutral-800 dark:text-neutral-100">Alex</h3>
                             <p className="text-[10px] text-emerald-500 font-mono flex items-center gap-1">
                                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                                 Active Session Bound
@@ -68,8 +68,6 @@ export function AlexCopilotPanel({ isOpen, onClose }: AlexCopilotPanelProps) {
                         ✕
                     </button>
                 </div>
-
-                {/* Dynamic Context Scope Banner */}
                 <div className="p-3 bg-blue-500/10 dark:bg-blue-500/5 border-b border-blue-500/20 dark:border-blue-500/10 flex items-center justify-between text-xs font-mono">
                     <div className="flex items-center gap-1.5 text-blue-600 dark:text-blue-400">
                         <span>{context.icon}</span>

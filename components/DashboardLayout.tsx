@@ -426,7 +426,7 @@ export function FilterBar({
   );
 }
 
-export function MetricsGrid({
+/*export function MetricsGrid({
   isLoading,
   totalPortfolio,
   totalOverdue,
@@ -437,7 +437,7 @@ export function MetricsGrid({
 
   return (
     <div className="grid gap-4 md:grid-cols-3">
-      {/* Portfolio Card */}
+      {/!* Portfolio Card *!/}
       <Card className="shadow-sm border-neutral-200">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-xs font-bold uppercase tracking-wider text-neutral-400">
@@ -456,7 +456,7 @@ export function MetricsGrid({
         </CardContent>
       </Card>
 
-      {/* Overdue Risk Card */}
+      {/!* Overdue Risk Card *!/}
       <Card className="shadow-sm border-neutral-200">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-xs font-bold uppercase tracking-wider text-neutral-400">
@@ -475,7 +475,7 @@ export function MetricsGrid({
         </CardContent>
       </Card>
 
-      {/* Collected Capital Card */}
+      {/!* Collected Capital Card *!/}
       <Card className="shadow-sm border-neutral-200">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-xs font-bold uppercase tracking-wider text-neutral-400">
@@ -495,7 +495,7 @@ export function MetricsGrid({
       </Card>
     </div>
   );
-}
+}*/
 
 export function DashboardHeader({
   isRefetching,
