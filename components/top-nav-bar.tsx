@@ -57,7 +57,7 @@ export function TopNavBar() {
   };
 
   return (
-    <header className="sticky top-0 z-40 py-3 flex h-14c items-center justify-between border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 px-6 shadow-sm transition-colors duration-200">
+    <header className="sticky top-0  py-3 flex h-14c items-center justify-between border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 px-6 shadow-sm transition-colors duration-200">
       <div className="flex items-center gap-4">
         <span className="text-xs font-extrabold tracking-widest uppercase text-neutral-900 dark:text-white">
           LMS | Portal

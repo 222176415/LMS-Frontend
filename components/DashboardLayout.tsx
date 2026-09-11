@@ -149,7 +149,7 @@ export function AutoIssueModal() {
                 onChange={(e) =>
                   setForm({ ...form, firstName: e.target.value })
                 }
-                placeholder="John"
+                placeholder="First Name"
                 className="h-9 text-xs"
               />
             </div>
@@ -160,7 +160,7 @@ export function AutoIssueModal() {
               <Input
                 value={form.surname}
                 onChange={(e) => setForm({ ...form, surname: e.target.value })}
-                placeholder="Doe"
+                placeholder="Surname"
                 className="h-9 text-xs"
               />
             </div>
@@ -172,7 +172,7 @@ export function AutoIssueModal() {
                 type="email"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                placeholder="johndoe@example.com"
+                placeholder="example@gmail.com"
                 className="h-9 text-xs"
               />
             </div>
@@ -186,7 +186,7 @@ export function AutoIssueModal() {
                 onChange={(e) =>
                   setForm({ ...form, phoneNumber: e.target.value })
                 }
-                placeholder="+27 82 123 4567"
+                placeholder="+27 82 000 0000"
                 className="h-9 text-xs"
               />
             </div>

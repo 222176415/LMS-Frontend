@@ -22,9 +22,10 @@ import {
   MoreHorizontal,
   Plus,
   RefreshCw,
-  Search,
+  Search,Loader2,
   Trash2, XCircle
 } from "lucide-react";
+
 import {
   Table,
   TableBody,
@@ -78,20 +79,26 @@ export function AutoIssueModal() {
   };
   const createLoanMutation = useMutation({
     mutationFn: async (payload: any) => {
-      return await apiClient.post("/loans", payload);
+      // Return response.data directly if apiClient is Axios
+      const response = await apiClient.post("/loans", payload);
+      return response.data ?? response;
     },
-    onSuccess: (response: any) => {
-      if (response && response.success === false) {
+    onSuccess: (data: any) => {
+      // 1. Check for custom business failure response ({ success: false })
+      if (data && data.success === false) {
+        setIsOpen(false);
         showToast(
-          "error",
-          response.message || "Runtime configuration mismatch.",
+            "error",
+            data.message || "Runtime configuration mismatch."
         );
+        setIsOpen(false);
         return;
       }
 
+      // 2. Handle successful loan creation
       showToast(
-        "success",
-        "Loan ledger record provisions initialized successfully!",
+          "success",
+          "Loan ledger record provisions initialized successfully!"
       );
       queryClient.invalidateQueries({ queryKey: ["loansLedger"] });
       setIsOpen(false);
@@ -106,11 +113,13 @@ export function AutoIssueModal() {
       });
     },
     onError: (err: any) => {
-      console.log(err, "error");
-      showToast(
-        "error",
-        err?.message || "Internal transmission layer interface failure.",
-      );
+      const errorMessage =
+          err?.response?.data?.message ||
+          err?.message ||
+          "Internal transmission layer interface failure.";
+
+      showToast("error", errorMessage);
+      setIsOpen(false);
     },
   });
 
@@ -168,7 +177,7 @@ export function AutoIssueModal() {
                 onChange={(e) =>
                   setForm({ ...form, firstName: e.target.value })
                 }
-                placeholder="John"
+                placeholder="First Name"
                 className="h-9 text-xs"
               />
             </div>
@@ -179,7 +188,7 @@ export function AutoIssueModal() {
               <Input
                 value={form.surname}
                 onChange={(e) => setForm({ ...form, surname: e.target.value })}
-                placeholder="Doe"
+                placeholder="Surname"
                 className="h-9 text-xs"
               />
             </div>
@@ -191,7 +200,7 @@ export function AutoIssueModal() {
                 type="email"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                placeholder="johndoe@example.com"
+                placeholder="example@gmail.com"
                 className="h-9 text-xs"
               />
             </div>
@@ -205,7 +214,7 @@ export function AutoIssueModal() {
                 onChange={(e) =>
                   setForm({ ...form, phoneNumber: e.target.value })
                 }
-                placeholder="+27 82 123 4567"
+                placeholder="+27 82 000 0000"
                 className="h-9 text-xs"
               />
             </div>
@@ -284,7 +293,7 @@ export function LoansTable({
     const matchesTab = statusFilter === "All" || loan.status === statusFilter;
     return matchesSearch && matchesTab;
   });
-
+console.log("loans",loans)
   return (
       <TooltipProvider delayDuration={200}>
         <div className="rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900 overflow-hidden shadow-xs">
@@ -412,7 +421,7 @@ export function LoansTable({
                                         disabled={currentUserOrgId === 1}
                                         className="gap-2 cursor-pointer text-neutral-400 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/20 disabled:opacity-40 disabled:cursor-not-allowed"
                                     >
-                                      <Trash2 size={13} /> Drop From Ledger
+                                      <Trash2 size={13} /> Delete
                                     </DropdownMenuItem>
                                   </div>
                                 </TooltipTrigger>
@@ -548,38 +557,44 @@ export function MetricsGrid({
 }
 
 export function DashboardHeader({
-  isRefetching,
-  onExport,
-}: DashboardHeaderProps) {
+                                  isRefetching,
+                                  isExporting,
+                                  onExport,
+                                }: DashboardHeaderProps) {
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-extrabold tracking-tight md:text-3xl uppercase text-neutral-900 dark:text-white">
-            Loans Ledger
-          </h1>
-          {isRefetching && (
-            <RefreshCw className="h-4 w-4 animate-spin text-neutral-400" />
-          )}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-extrabold tracking-tight md:text-3xl uppercase text-neutral-900 dark:text-white">
+              Loans Ledger
+            </h1>
+            {isRefetching && (
+                <RefreshCw className="h-4 w-4 animate-spin text-neutral-400" />
+            )}
+          </div>
+          <p className="text-neutral-500 text-xs mt-0.5">
+            Issue capital, track repayment structures, and review automated
+            default risks.
+          </p>
         </div>
-        <p className="text-neutral-500 text-xs mt-0.5">
-          Issue capital, track repayment structures, and review automated
-          default risks.
-        </p>
-      </div>
 
-      <div className="flex flex-wrap items-center gap-3">
-        <Button
-          variant="outline"
-          onClick={onExport}
-          className="border-neutral-200 text-neutral-600 text-xs rounded-md h-9 gap-1.5 hover:bg-neutral-50"
-        >
-          <FileSpreadsheet size={14} />
-          <span>Export Report</span>
-        </Button>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button
+              variant="outline"
+              onClick={onExport}
+              disabled={isExporting}
+              className="border-neutral-200 text-neutral-600 text-xs rounded-md h-9 gap-1.5 hover:bg-neutral-50 disabled:opacity-50"
+          >
+            {isExporting ? (
+                <Loader2 size={14} className="animate-spin text-neutral-500" />
+            ) : (
+                <FileSpreadsheet size={14} />
+            )}
+            <span>{isExporting ? "Exporting..." : "Export Report"}</span>
+          </Button>
 
-        <AutoIssueModal />
+          <AutoIssueModal />
+        </div>
       </div>
-    </div>
   );
 }

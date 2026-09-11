@@ -189,7 +189,7 @@ export default function BorrowersDashboardPage() {
                     <Input
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
-                        placeholder="Mzakes"
+                        placeholder="First Name"
                         className="rounded-md border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 h-9 text-xs"
                     />
                   </div>
@@ -200,7 +200,7 @@ export default function BorrowersDashboardPage() {
                     <Input
                         value={surname}
                         onChange={(e) => setSurname(e.target.value)}
-                        placeholder="Chauke"
+                        placeholder="Surname"
                         className="rounded-md border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 h-9 text-xs"
                     />
                   </div>
@@ -213,7 +213,7 @@ export default function BorrowersDashboardPage() {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Gift@Chauke.co.za"
+                      placeholder="example@gmail.com"
                       className="rounded-md border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 h-9 text-xs"
                   />
                 </div>
@@ -225,7 +225,7 @@ export default function BorrowersDashboardPage() {
                       type="text"
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value)}
-                      placeholder="0792224455"
+                      placeholder="07 000 00000"
                       className="rounded-md border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 h-9 text-xs"
                   />
                 </div>

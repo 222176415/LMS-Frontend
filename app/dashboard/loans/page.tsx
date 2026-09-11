@@ -100,12 +100,49 @@ export default function LoansLedgerPage() {
       </div>
     );
   }
+  const [isExporting, setIsExporting] = useState(false);
 
+  const handleExport = async () => {
+    try {
+      setIsExporting(true);
+      
+      const response = await apiClient.get("/Loans/export", {
+        responseType: "blob",
+      });
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const contentDisposition = response.headers["content-disposition"];
+      let fileName = `Loans_Report_${new Date().toISOString().slice(0, 10)}.xlsx`;
+
+      if (contentDisposition) {
+        const match = contentDisposition.match(/filename\*?=(?:UTF-8'')?([^;]+)/i);
+        if (match && match[1]) {
+          fileName = decodeURIComponent(match[1].replace(/["']/g, ""));
+        }
+      }
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Export Error:", error);
+    /*  showToast("error", "Failed to download Excel report.");*/
+    } finally {
+      setIsExporting(false);
+    }
+  };
   return (
     <div className="space-y-8 p-6">
       <DashboardHeader
-        isRefetching={isRefetching}
-        onExport={() => alert("Export initialized.")}
+          isRefetching={isRefetching}
+          isExporting={isExporting}
+          onExport={handleExport}
       />
       <MetricsGrid
         isLoading={isLoading}
@@ -132,3 +169,4 @@ export default function LoansLedgerPage() {
     </div>
   );
 }
+

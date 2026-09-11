@@ -30,7 +30,7 @@ export function AlexCopilotPanel({ isOpen, onClose }: AlexCopilotPanelProps) {
    // localStorage.setItem("lms_user_role", response.data.role);
     useEffect(() => {
         if (typeof window !== "undefined") {
-            setloggedInUserName(localStorage.getItem("lms_user_name") || "none");
+            setloggedInUserName(localStorage.getItem("lms_user_name") || "");
         }
     }, []);
 
