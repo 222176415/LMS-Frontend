@@ -293,7 +293,7 @@ export function LoansTable({
     const matchesTab = statusFilter === "All" || loan.status === statusFilter;
     return matchesSearch && matchesTab;
   });
-console.log("loans",loans)
+
   return (
       <TooltipProvider delayDuration={200}>
         <div className="rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900 overflow-hidden shadow-xs">

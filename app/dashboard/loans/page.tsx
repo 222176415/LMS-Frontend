@@ -52,20 +52,23 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { useLoansLedgerQuery } from "@/lib/api-hooks";
-import { Loan } from "@/lib/type";
+import {Loan, LoanRecord} from "@/lib/type";
 import {
   DashboardHeader,
   FilterBar,
   LoansTable,
   MetricsGrid,
 } from "@/components/Dashboard/DashboardLayout";
+import {ViewLoanStatementModal} from "@/components/Dashboard/ViewLoanStatementModal";
 
 export default function LoansLedgerPage() {
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState<
     "All" | "Active" | "Overdue" | "Paid"
   >("All");
-
+  const [isExporting, setIsExporting] = useState(false);
+  const [selectedLoanForView, setSelectedLoanForView] = useState<LoanRecord | null>(null);
+  const [isStatementModalOpen, setIsStatementModalOpen] = useState(false);
   const {
     data: loans = [],
     isLoading,
@@ -100,8 +103,7 @@ export default function LoansLedgerPage() {
       </div>
     );
   }
-  const [isExporting, setIsExporting] = useState(false);
-
+ 
   const handleExport = async () => {
     try {
       setIsExporting(true);
@@ -137,6 +139,21 @@ export default function LoansLedgerPage() {
       setIsExporting(false);
     }
   };
+
+
+  const handleTableAction = (
+      actionType: "APPROVE" | "DECLINE" | "PAYMENT" | "EDIT" | "DELETE" | "VIEW",
+      loan: LoanRecord
+  ) => {
+    if (actionType === "VIEW") {
+      setSelectedLoanForView(loan);
+      setIsStatementModalOpen(true);
+      return;
+    }
+
+    // Handle other actions (APPROVE, DECLINE, PAYMENT, etc.)
+  };
+  
   return (
     <div className="space-y-8 p-6">
       <DashboardHeader
@@ -161,10 +178,18 @@ export default function LoansLedgerPage() {
       <LoansTable
         isLoading={isLoading}
         //currentUserOrgId={1}
-        //onAction={{n}}
+        onAction={handleTableAction}
         loans={loans}
         globalFilter={search}
         statusFilter={activeTab}
+      />
+      <ViewLoanStatementModal
+          loan={selectedLoanForView}
+          isOpen={isStatementModalOpen}
+          onClose={() => {
+            setIsStatementModalOpen(false);
+            setSelectedLoanForView(null);
+          }}
       />
     </div>
   );

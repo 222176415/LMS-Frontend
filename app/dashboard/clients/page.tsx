@@ -47,6 +47,9 @@ import {
 
 // Assuming this hook returns your typed backend structure: { success: boolean, data: Client[], message: string }
 import { useBorrowersQuery } from "@/lib/api-hooks";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {apiClient} from "@/lib/api-client";
+import {NotificationCenter ,Toast} from "@/components/Notification";
 
 interface Client {
   id: number;
@@ -56,29 +59,37 @@ interface Client {
   email: string;
   phoneNumber: string;
   address: string;
-  activeLoanCount?: number; // Kept optional as backend response doesn't provide this natively
+  activeLoanCount?: number; 
 }
 
 export default function BorrowersDashboardPage() {
-  // Pull data from your backend query hook
+  
   const { data: clientsData, isLoading, isRefetching } = useBorrowersQuery();
-
-  // Extract clients array out of the response envelope safely
+  const queryClient = useQueryClient();
+ 
   const backendClients: Client[] = clientsData|| [];
 
-  // Local state to track newly appended borrowers alongside remote server records
+ 
   const [localClients, setLocalClients] = useState<Client[]>([]);
   const [search, setSearch] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  // Form State parameters for New Borrower Onboarding
   const [firstName, setFirstName] = useState("");
   const [surname, setSurname] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [address, setAddress] = useState("");
+  const [toasts, setToasts] = useState<Toast[]>([]);
 
-  // Clear local updates when raw backend structural frames completely switch or refresh
+  const showToast = (type: "success" | "error", message: string) => {
+    const id = Math.random().toString(36).substring(2, 9);
+    setToasts((prev) => [...prev, { id, type, message }]);
+  };
+
+  const removeToast = (id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  };
+
   useEffect(() => {
     if (backendClients.length > 0) {
       setLocalClients([]);
@@ -88,55 +99,87 @@ export default function BorrowersDashboardPage() {
   // Combine remote dataset with your newly committed local memory blocks
   const combinedClients = [...localClients, ...backendClients];
 
-  // FUNCTIONAL BUTTON: Dynamic client profile registration with memory push
+  const createClientMutation = useMutation({
+    mutationFn: async (newClientPayload: {
+      firstName: string;
+      surname: string;
+      email: string;
+      phoneNumber: string;
+      address: string;
+    }) => {
+      const response = await apiClient.post("/Clients", newClientPayload);
+      return response.data ?? response;
+    },
+    onSuccess: (res: any) => {
+      if (res && res.success === false) {
+        showToast("error", res.message || "Failed to onboard borrower profile.");
+        setIsDialogOpen(false)
+        return;
+      }
+
+      showToast("success", "Borrower created successfully!");
+
+      // Invalidate borrowers list
+      queryClient.invalidateQueries({ queryKey: ["borrowers"] });
+
+      // Reset modal and inputs
+      setIsDialogOpen(false);
+      setFirstName("");
+      setSurname("");
+      setEmail("");
+      setPhoneNumber("");
+      setAddress("");
+
+      // Trigger full page reload
+      window.location.reload();
+    },
+    onError: (err: any) => {
+      console.error("Borrower Creation Error:", err);
+      const message =
+          err?.response?.data?.message ||
+          err?.message ||
+          "Failed to transmit client record to the network layer.";
+      showToast("error", message);
+    },
+  });
+
+  // SUBMIT HANDLER
   const handleCreateClient = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!firstName || !surname || !email || !phoneNumber || !address) {
-      alert("Validation Constraint: Complete all borrower data properties.");
+      showToast("error", "Validation Constraint: Complete all borrower data properties.");
       return;
     }
 
-    // Verify duplicate email inside the unified client data registry array
-    const emailTaken = combinedClients.some(
+    // Client-side duplicate check
+    const emailTaken = clientsData?.some(
         (c) => c.email.toLowerCase() === email.toLowerCase()
     );
     if (emailTaken) {
-      alert(
-          `Conflict: The email address '${email}' is already registered within this tenant organization.`
+      setIsDialogOpen(false)
+      showToast(
+          "error",
+          `Dupplicate Entries: The email address '${email}' is already registered within this  organization.`
       );
       return;
     }
 
-    const newClient: Client = {
-      id: Date.now(), // Unique runtime temporary numeric ID descriptor
+    createClientMutation.mutate({
       firstName,
       surname,
       email,
       phoneNumber,
       address,
-      activeLoanCount: 0,
-    };
-
-    setLocalClients([newClient, ...localClients]);
-    setIsDialogOpen(false);
-
-    // Reset Form Input Buffers
-    setFirstName("");
-    setSurname("");
-    setEmail("");
-    setPhoneNumber("");
-    setAddress("");
+    });
   };
-
-  // Live filter operations matching inputs against database text matrices
+  
   const filteredClients = combinedClients.filter((c) =>
       `${c.firstName || ""} ${c.surname || ""} ${c.email || ""}`
           .toLowerCase()
           .includes(search.toLowerCase())
   );
 
-  // Metrics derived safely from runtime objects
   const totalClientsCount = combinedClients.length;
   const activeBorrowersCount = combinedClients.filter(
       (c) => (c.activeLoanCount || 0) > 0
@@ -147,7 +190,7 @@ export default function BorrowersDashboardPage() {
 
   return (
       <div className="space-y-8 transition-colors duration-200 md:p-4 p-2">
-        {/* HEADER CONTROLS WINDOW */}
+        <NotificationCenter notifications={toasts} onDismiss={removeToast} />
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-2">

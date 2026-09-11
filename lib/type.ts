@@ -121,7 +121,7 @@ export interface MetricsGridProps {
   totalOverdue: number;
   collectedCapital: number;
 }
-interface DashboardHeaderProps {
+export interface DashboardHeaderProps {
   isRefetching?: boolean;
   isExporting?: boolean;
   onExport: () => void;
