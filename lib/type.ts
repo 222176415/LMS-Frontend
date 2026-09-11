@@ -180,3 +180,16 @@ export interface LoansTableProps {
   currentUserOrgId: number; // Injected to manage Super Admin perimeter controls cleanly
   onAction: (actionType: "APPROVE" | "DECLINE" | "PAYMENT" | "EDIT" | "DELETE" | "VIEW", loan: LoanRecord) => void;
 }
+
+export interface DatabaseSchemaData {
+  organizationId: number;
+  database: string;
+  formattedSchema: string;
+  tables: Record<string, string[]>;
+}
+
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  message: string;
+}
