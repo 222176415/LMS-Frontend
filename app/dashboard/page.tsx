@@ -36,12 +36,13 @@ import {
   ArrowRight,
   UserPlus,
   FileText,
-  ShieldAlert,
-  Clock,
+  ShieldAlert,Sparkles,
+  Clock, ShieldCheck, Building2,
 } from "lucide-react";
 import { useDashboardSummaryQuery } from "@/lib/api-hooks";
 import DashboardLayout from "./layout";
 import { Skeleton } from "@/components/ui/skeleton";
+import {WelcomeBanner} from "@/components/Dashboard/WelcomeBanner";
 
 const RISK_PORTFOLIO_DATA = [
   { name: "Active Book", value: 248500 },
@@ -65,124 +66,26 @@ export default function CoreDashboardIndex() {
     mounted && resolvedTheme === "dark"
       ? ["#fafafa", "#a3a3a3", "#404040"] // Dark mode accents
       : ["#171717", "#737373", "#e5e5e5"]; // Light mode accents
+  const [userData, setUserData] = useState({
+    name: "",
+    role: "",
+    orgName: "",
+  });
 
+  useEffect(() => {
+    const name = localStorage.getItem("lms_user_name") || "User";
+    const role = localStorage.getItem("lms_user_role") || "Member";
+    const orgName = localStorage.getItem("organizationName") || "Workspace";
+
+    setUserData({ name, role, orgName });
+  }, []);
   return (
     <div className="space-y-8 transition-colors duration-200 md:p-4 p-2">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-2xl font-extrabold tracking-tight md:text-3xl uppercase text-neutral-900 dark:text-white">
-          Workspace Overview
-        </h1>
-        <p className="text-neutral-500 dark:text-neutral-400 text-xs">
-          Operational control hub for managing active capital deployments,
-          monitoring risk states, and processing borrower servicing requests.
-        </p>
-      </div>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 rounded-xl shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
-              Accumulated Capital
-            </CardTitle>
-            <TrendingUp className="h-4 w-4 text-neutral-400" />
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <div className="space-y-2 py-0.5">
-                <Skeleton variant="rectangular" className="h-7 w-28" />
-                <Skeleton variant="text" className="w-40" />
-              </div>
-            ) : (
-              <>
-                <div className="text-xl font-bold tracking-tight text-neutral-900 dark:text-white">
-                  {dashboardData?.metrics?.activeDisbursed}
-                </div>
-                <p className="text-[9px] text-neutral-400 font-mono mt-0.5">
-                  Active loan book principal value
-                </p>
-              </>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 rounded-xl shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
-              Portfolio at Risk
-            </CardTitle>
-            <AlertTriangle className="h-4 w-4 text-neutral-400 animate-pulse" />
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <div className="space-y-2 py-0.5">
-                <Skeleton variant="rectangular" className="h-7 w-24" />
-                <Skeleton variant="text" className="w-36" />
-              </div>
-            ) : (
-              <>
-                <div className="text-xl font-bold tracking-tight text-neutral-900 dark:text-white">
-                  {dashboardData?.metrics?.overdueAtRisk}
-                </div>
-                <p className="text-[9px] text-neutral-400 font-mono mt-0.5">
-                  Total active overdue balances
-                </p>
-              </>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 rounded-xl shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
-              Interest Revenue
-            </CardTitle>
-            <Coins className="h-4 w-4 text-neutral-400" />
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <div className="space-y-2 py-0.5">
-                <Skeleton variant="rectangular" className="h-7 w-20" />
-                <Skeleton variant="text" className="w-32" />
-              </div>
-            ) : (
-              <>
-                <div className="text-xl font-bold tracking-tight text-neutral-900 dark:text-white">
-                  {dashboardData?.metrics?.collectedInterest}
-                </div>
-                <p className="text-[9px] text-neutral-400 font-mono mt-0.5">
-                  Returned profit ledger margin
-                </p>
-              </>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 rounded-xl shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
-              Inbound Requests
-            </CardTitle>
-            <Clock className="h-4 w-4 text-neutral-400" />
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <div className="space-y-2 py-0.5">
-                <Skeleton variant="rectangular" className="h-7 w-16" />
-                <Skeleton variant="text" className="w-44" />
-              </div>
-            ) : (
-              <>
-                <div className="text-xl font-bold tracking-tight text-neutral-900 dark:text-white">
-                  {dashboardData?.metrics?.pendingRequests}
-                </div>
-                <p className="text-[9px] text-neutral-400 font-mono mt-0.5">
-                  Awaiting workspace onboarding approvals
-                </p>
-              </>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
+      <WelcomeBanner
+          userData={userData}
+          dashboardData={dashboardData}
+          isLoading={isLoading}
+      />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 md:gap-4">
         <Card className="border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 rounded-xl shadow-sm p-4">
           <CardHeader className="p-2 pb-6">

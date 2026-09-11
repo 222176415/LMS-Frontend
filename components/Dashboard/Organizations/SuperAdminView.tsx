@@ -73,7 +73,7 @@ export function SuperAdminView() {
                         {isRefetching && <RefreshCw className="h-4 w-4 animate-spin text-neutral-400" />}
                     </div>
                     <p className="text-neutral-500 text-xs mt-0.5">
-                        Root Tenant Management Zone. Provision workspace environments, allocate regional tax structures, and monitor instances.
+                        Root Tenant Management Zone. Provision workspace environments - Onboard New Organizations 
                     </p>
                 </div>
 
@@ -81,7 +81,7 @@ export function SuperAdminView() {
                     <DialogTrigger asChild>
                         <Button className="bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-neutral-800 text-xs h-9 gap-1.5 rounded-md">
                             <Plus size={14} />
-                            <span>Provision Organization</span>
+                            <span>Onboard Organization</span>
                         </Button>
                     </DialogTrigger>
                     <DialogContent className="max-w-2xl bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 rounded-xl shadow-lg">

@@ -40,11 +40,15 @@ import {
   UserCheck,
   ShieldAlert,
   Mail,
-  RefreshCw, Edit, Trash2,
+  RefreshCw, Edit, Trash2, Loader2,
 } from "lucide-react";
 
 // Using the correct hook matching your backend team data stream context
 import { useStaffDirectoryQuery } from "@/lib/api-hooks";
+import {NotificationCenter ,Toast} from "@/components/Notification";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {apiClient} from "@/lib/api-client";
+import { RoleGuard } from "@/components/auth/role-guard";
 
 interface StaffMember {
   id: number;
@@ -71,14 +75,73 @@ export default function StaffDirectoryPage() {
   const [email, setEmail] = useState("");
   const [roleName, setRoleName] = useState("LoanOfficer");
 
-  // Combine remote dataset with local updates
+  const queryClient = useQueryClient();
   const combinedStaff = [...localStaff, ...backendStaff];
+  const [password, setPassword] = useState("");
+  const [toasts, setToasts] = useState<Toast[]>([]);
 
+  // 2. Define showToast and removeToast helpers
+  const showToast = (type: "success" | "error", message: string) => {
+    const id = Math.random().toString(36).substring(2, 9);
+    setToasts((prev) => [...prev, { id, type, message }]);
+  };
+
+  const removeToast = (id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  };
+  const createUserMutation = useMutation({
+    mutationFn: async (newUserPayload: {
+      fullName: string;
+      email: string;
+      roleId: number;
+      roleName: string;
+      Password: string; 
+    }) => {
+      const response = await apiClient.post("/Users", newUserPayload);
+      return response.data ?? response;
+    },
+    onSuccess: (res: any) => {
+      if (res && res.success === false) {
+        showToast("error", res.message || "Failed to provision user profile.");
+        return;
+      }
+
+      showToast("success", "User profile created successfully!");
+
+   
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+ 
+
+      // Reset state & modal
+      setIsDialogOpen(false);
+      setFullName("");
+      setEmail("");
+      setPassword("");
+      setRoleName("LoanOfficer");
+
+      // Trigger full page reload
+      window.location.reload();
+    },
+    onError: (err: any) => {
+      console.error("User Provisioning Error:", err);
+      setIsDialogOpen(false);
+      const message =
+          err?.response?.data?.message ||
+          err?.message ||
+          "Failed to transmit user record to the network layer.";
+      showToast("error", message);
+    },
+  });
+
+// 3. Updated Submit Handler
   const handleCreateStaff = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!fullName || !email) {
-      alert("Validation Constraint: Complete all requested identity properties.");
+    if (!fullName || !email || !password) {
+      showToast(
+          "error",
+          "Validation Constraint: Complete all requested identity properties."
+      );
       return;
     }
 
@@ -86,25 +149,17 @@ export default function StaffDirectoryPage() {
         (s) => s.email.toLowerCase() === email.toLowerCase() && s.email !== ""
     );
     if (emailTaken) {
-      alert(`Conflict: The email address '${email}' is already registered.`);
+      showToast("error", `Conflict: The email address '${email}' is already registered.`);
       return;
     }
 
-    const newStaff: StaffMember = {
-      id: Date.now(),
+    createUserMutation.mutate({
       fullName,
       email,
       roleId: roleName === "Admin" ? 1 : 2,
       roleName,
-      isActive: true,
-    };
-
-    setLocalStaff([newStaff, ...localStaff]);
-    setIsDialogOpen(false);
-
-    // Reset parameters
-    setFullName("");
-    setEmail("");
+      Password: password,
+    });
   };
 
   // Filter evaluation checking text records
@@ -121,8 +176,9 @@ export default function StaffDirectoryPage() {
   const adminStaffCount = combinedStaff.filter((s) => s.roleName === "Admin").length;
 
   return (
+      <RoleGuard allowedRoles={["Admin", "SuperAdmin"]}>
       <div className="space-y-8 transition-colors duration-200 p-6">
-        {/* HEADER CONTROLS WINDOW */}
+        <NotificationCenter notifications={toasts} onDismiss={removeToast} />
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-2">
@@ -138,7 +194,6 @@ export default function StaffDirectoryPage() {
             </p>
           </div>
 
-          {/* MODAL TRIGGER FOR ONBOARDING FORM */}
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button className="bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-neutral-100 text-xs rounded-md h-9 gap-1.5 transition-all">
@@ -163,7 +218,8 @@ export default function StaffDirectoryPage() {
                   <Input
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
-                      placeholder="Naledi Mabaso"
+                      placeholder="Full Names"
+                      disabled={createUserMutation.isPending}
                       className="rounded-md border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 h-9 text-xs"
                   />
                 </div>
@@ -175,7 +231,21 @@ export default function StaffDirectoryPage() {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="n.mabaso@mzansicredit.co.za"
+                      placeholder="email@gmail.com"
+                      disabled={createUserMutation.isPending}
+                      className="rounded-md border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 h-9 text-xs"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
+                    Default Password
+                  </Label>
+                  <Input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      disabled={createUserMutation.isPending}
                       className="rounded-md border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 h-9 text-xs"
                   />
                 </div>
@@ -186,7 +256,8 @@ export default function StaffDirectoryPage() {
                   <select
                       value={roleName}
                       onChange={(e) => setRoleName(e.target.value)}
-                      className="w-full rounded-md border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 h-9 text-xs px-3 focus:outline-hidden"
+                      disabled={createUserMutation.isPending}
+                      className="w-full rounded-md border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 h-9 text-xs px-3 focus:outline-none"
                   >
                     <option value="LoanOfficer">LoanOfficer</option>
                     <option value="Admin">Admin</option>
@@ -197,15 +268,22 @@ export default function StaffDirectoryPage() {
                       type="button"
                       variant="ghost"
                       onClick={() => setIsDialogOpen(false)}
+                      disabled={createUserMutation.isPending}
                       className="rounded-md text-xs h-9 text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800"
                   >
                     Cancel
                   </Button>
                   <Button
                       type="submit"
-                      className="bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-neutral-100 rounded-md text-xs h-9 font-medium"
+                      disabled={createUserMutation.isPending}
+                      className="bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-neutral-100 rounded-md text-xs h-9 font-medium gap-2"
                   >
-                    Confirm Assignment
+                    {createUserMutation.isPending && (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    )}
+                    <span>
+            {createUserMutation.isPending ? "Onboarding..." : "Onboard User"}
+          </span>
                   </Button>
                 </DialogFooter>
               </form>
@@ -381,5 +459,6 @@ export default function StaffDirectoryPage() {
           </Table>
         </Card>
       </div>
+      </RoleGuard>
   );
 }

@@ -7,11 +7,13 @@ import { RefreshCw, ShieldCheck } from "lucide-react";
 import {AuditKPICards} from "@/components/Dashboard/Audit/AuditKPICards";
 import {AuditDataTables} from "@/components/Dashboard/Audit/AuditDataTables";
 import {useAuditHub} from "@/lib/useAuditHub";
+import {RoleGuard} from "@/components/auth/role-guard";
 
 export default function SecurityAuditDashboard() {
   const { activities, logins, telemetry, isConnected, refreshMetrics } = useAuditHub();
-console.log("Tel 2",telemetry)
+
   return (
+      <RoleGuard allowedRoles={["Admin", "SuperAdmin"]}>
       <div className="space-y-6 p-6">
         {/* DASHBOARD TITLE PANEL BLOCK */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -40,5 +42,6 @@ console.log("Tel 2",telemetry)
         <AuditKPICards telemetry={telemetry} isConnected={isConnected} />
         <AuditDataTables activities={activities} logins={logins} />
       </div>
+      </RoleGuard>
   );
 }
